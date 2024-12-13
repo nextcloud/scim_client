@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>scim_client</id>
+	<name>SCIM Client</name>
+	<summary>Use Nextcloud as an SCIM identity provider</summary>
+	<description>Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.
+
+Simply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers.</description>
+	<version>0.1.0</version>
+	<licence>agpl</licence>
+	<author mail="contact@edward.ly" homepage="https://edward.ly/">Edward Ly</author>
+	<namespace>ScimClient</namespace>
+	<category>integration</category>
+	<category>social</category>
+	<bugs>https://github.com/nextcloud/scim_client/issues</bugs>
+	<dependencies>
+		<nextcloud min-version="29" max-version="31"/>
+	</dependencies>
+	<navigations>
+		<navigation>
+			<id>scim_client</id>
+			<name>SCIM Client</name>
+			<route>scim_client.page.index</route>
+			<icon>app.svg</icon>
+			<type>link</type>
+		</navigation>
+	</navigations>
+</info>
