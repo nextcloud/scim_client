@@ -17,13 +17,4 @@ Simply add your SCIM servers in the admin settings, and the app will automatical
 	<dependencies>
 		<nextcloud min-version="29" max-version="31"/>
 	</dependencies>
-	<navigations>
-		<navigation>
-			<id>scim_client</id>
-			<name>SCIM Client</name>
-			<route>scim_client.page.index</route>
-			<icon>app.svg</icon>
-			<type>link</type>
-		</navigation>
-	</navigations>
 </info>
