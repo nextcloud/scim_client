@@ -1,8 +1,8 @@
 <template>
 	<div id="scim_client">
 		<div class="section">
-			<h2 style="display: flex;">
-				<ScimClientIcon style="margin-right: 12px;" />
+			<h2>
+				<ScimClientIcon class="admin-settings-icon" />
 				{{ t('scim_client', 'SCIM Client') }}
 			</h2>
 			<p>{{ t('scim_client', 'Use Nextcloud as an identity provider for external services using the SCIM standard.') }}</p>
@@ -19,12 +19,12 @@
 			</NcEmptyContent>
 			<NcButton
 				type="primary"
-				style="margin: 20px 0;"
+				class="register-button"
 				@click="showRegister">
 				{{ t('app_api', 'Register') }}
 				<template #icon>
 					<Plus v-if="!registering" :size="20" />
-					<NcLoadingIcon v-else />
+					<NcLoadingIcon v-else :size="20" />
 				</template>
 			</NcButton>
 		</NcSettingsSection>
@@ -66,3 +66,19 @@ export default {
 	},
 }
 </script>
+
+<style scoped lang="scss">
+#scim_client {
+	h2 {
+		display: flex;
+
+		.admin-settings-icon {
+			margin-right: 12px;
+		}
+	}
+
+	.register-button {
+		margin: 20px 0;
+	}
+}
+</style>
