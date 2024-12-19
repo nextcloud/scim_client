@@ -27,6 +27,7 @@
 					<NcLoadingIcon v-else :size="20" />
 				</template>
 			</NcButton>
+			<RegisterServerModal :show.sync="showRegisterModal" :servers="servers" :get-all-servers="getAllServers" />
 		</NcSettingsSection>
 	</div>
 </template>
@@ -40,7 +41,9 @@ import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.
 import FormatListBullet from 'vue-material-design-icons/FormatListBulleted.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import RegisterServerModal from './Server/RegisterServerModal.vue'
 import ScimClientIcon from './icons/ScimClientIcon.vue'
+// import ServerListItem from './Server/ServerListItem.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -51,6 +54,7 @@ export default {
 		NcLoadingIcon,
 		NcSettingsSection,
 		Plus,
+		RegisterServerModal,
 		ScimClientIcon,
 	},
 	data() {
@@ -62,6 +66,14 @@ export default {
 	methods: {
 		showRegister() {
 			this.showRegisterModal = true
+		},
+		getAllServers() {
+			// TODO: retrieve server list from database
+
+			// return axios.get(generateUrl('/apps/scim_client/servers'))
+			// .then(res => {
+			// this.$emit('update:servers', res.data.servers)
+			// })
 		},
 	},
 }
