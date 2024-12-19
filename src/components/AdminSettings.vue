@@ -10,13 +10,25 @@
 		<NcSettingsSection
 			:name="t('scim_client', 'Registered Servers')"
 			:aria-label="t('scim_client', 'Registered Servers')">
-			<NcEmptyContent
-				:name="t('scim_client', 'No servers configured')"
-				:description="t('scim_client', 'Register a new server below and fill in the required details')">
-				<template #icon>
-					<FormatListBullet :size="20" />
-				</template>
-			</NcEmptyContent>
+			<div class="server-list">
+				<ul v-if="servers.length" :aria-label="t('scim_client', 'Registered servers list')">
+					<ServerListItem
+						v-for="server in servers"
+						:key="server.id"
+						:server="server"
+						:save-options="saveOptions"
+						:servers="servers"
+						:get-all-servers="getAllServers" />
+				</ul>
+				<NcEmptyContent
+					v-else
+					:name="t('scim_client', 'No servers configured')"
+					:description="t('scim_client', 'Register a new server below and fill in the required details')">
+					<template #icon>
+						<FormatListBullet :size="20" />
+					</template>
+				</NcEmptyContent>
+			</div>
 			<NcButton
 				type="primary"
 				class="register-button"
@@ -43,7 +55,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 
 import RegisterServerModal from './Server/RegisterServerModal.vue'
 import ScimClientIcon from './icons/ScimClientIcon.vue'
-// import ServerListItem from './Server/ServerListItem.vue'
+import ServerListItem from './Server/ServerListItem.vue'
 
 export default {
 	name: 'AdminSettings',
@@ -56,16 +68,24 @@ export default {
 		Plus,
 		RegisterServerModal,
 		ScimClientIcon,
+		ServerListItem,
 	},
 	data() {
 		return {
 			registering: false,
+			servers: [],
 			showRegisterModal: false,
 		}
+	},
+	mounted() {
+		// TODO: get current server list from state
 	},
 	methods: {
 		showRegister() {
 			this.showRegisterModal = true
+		},
+		saveOptions(values) {
+			// TODO: update selected server config to database
 		},
 		getAllServers() {
 			// TODO: retrieve server list from database
@@ -87,6 +107,12 @@ export default {
 		.admin-settings-icon {
 			margin-right: 12px;
 		}
+	}
+
+	.server-list {
+		max-width: 75%;
+		max-height: 300px;
+		overflow-y: scroll;
 	}
 
 	.register-button {
