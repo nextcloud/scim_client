@@ -10,90 +10,37 @@
 		<NcSettingsSection
 			:name="t('scim_client', 'Registered Servers')"
 			:aria-label="t('scim_client', 'Registered Servers')">
-			<div class="server-list">
-				<ul v-if="servers.length" :aria-label="t('scim_client', 'Registered servers list')">
-					<ServerListItem
-						v-for="server in servers"
-						:key="server.id"
-						:server="server"
-						:save-options="saveOptions"
-						:servers="servers"
-						:get-all-servers="getAllServers" />
-				</ul>
-				<NcEmptyContent
-					v-else
-					:name="t('scim_client', 'No servers configured')"
-					:description="t('scim_client', 'Register a new server below and fill in the required details')">
-					<template #icon>
-						<FormatListBullet :size="20" />
-					</template>
-				</NcEmptyContent>
-			</div>
-			<NcButton
-				type="primary"
-				class="register-button"
-				@click="showRegister">
-				{{ t('app_api', 'Register') }}
-				<template #icon>
-					<Plus v-if="!registering" :size="20" />
-					<NcLoadingIcon v-else :size="20" />
-				</template>
-			</NcButton>
-			<RegisterServerModal :show.sync="showRegisterModal" :servers="servers" :get-all-servers="getAllServers" />
+			<ServerList :servers.sync="servers" :save-options="saveOptions" />
 		</NcSettingsSection>
 	</div>
 </template>
 
 <script>
-import axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 
-import FormatListBullet from 'vue-material-design-icons/FormatListBulleted.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
-
-import RegisterServerModal from './Server/RegisterServerModal.vue'
 import ScimClientIcon from './icons/ScimClientIcon.vue'
-import ServerListItem from './Server/ServerListItem.vue'
+import ServerList from './Server/ServerList.vue'
 
 export default {
 	name: 'AdminSettings',
 	components: {
-		FormatListBullet,
-		NcButton,
-		NcEmptyContent,
-		NcLoadingIcon,
 		NcSettingsSection,
-		Plus,
-		RegisterServerModal,
 		ScimClientIcon,
-		ServerListItem,
+		ServerList,
 	},
 	data() {
 		return {
-			registering: false,
 			servers: [],
-			showRegisterModal: false,
 		}
 	},
 	mounted() {
 		this.servers = loadState('scim_client', 'admin-server-list')
 	},
 	methods: {
-		showRegister() {
-			this.showRegisterModal = true
-		},
 		saveOptions(values) {
 			// TODO: update selected server config to database
-		},
-		getAllServers() {
-			return axios.get(generateUrl('/apps/scim_client/servers'))
-				.then(res => this.$emit('update:servers', res.data.servers))
 		},
 	},
 }
@@ -107,16 +54,6 @@ export default {
 		.admin-settings-icon {
 			margin-right: 12px;
 		}
-	}
-
-	.server-list {
-		max-width: 75%;
-		max-height: 300px;
-		overflow-y: scroll;
-	}
-
-	.register-button {
-		margin: 20px 0;
 	}
 }
 </style>
