@@ -39,6 +39,7 @@
 			</div>
 			<NcButton
 				type="primary"
+				:disabled="!isFormValidated"
 				@click="isEdit ? updateServer() : registerServer()">
 				{{ isEdit ? t('scim_client', 'Save') : t('scim_client', 'Register') }}
 				<template #icon>
@@ -51,6 +52,11 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { confirmPassword } from '@nextcloud/password-confirmation'
+import { generateUrl } from '@nextcloud/router'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -133,6 +139,12 @@ export default {
 
 			return ''
 		},
+		isServerDetailsValidated() {
+			return this.serverUrl.length && this.isServerUrlValid && this.isServerUrlUnique && this.serverApiKey.length
+		},
+		isFormValidated() {
+			return this.serverName.length && this.isServerNameUnique && this.isServerDetailsValidated
+		},
 	},
 	watch: {
 		show(newShow) {
@@ -148,9 +160,36 @@ export default {
 		registerServer() {
 			this.registeringServer = true
 
-			// TODO: add server details to database
+			confirmPassword().then(() => {
+				const params = {
+					server: {
+						name: this.serverName,
+						url: this.serverUrl,
+						api_key: this.serverApiKey,
+					},
+				}
 
-			this.registeringServer = false
+				axios.post(generateUrl('apps/scim_client/servers'), params)
+					.then(res => {
+						if (res.data.success) {
+							showSuccess(t('scim_client', 'Server successfully registered'))
+							this.closeModal()
+							this.getAllServers()
+						} else {
+							showError(t('scim_client', 'Failed to register server. Check the logs'))
+						}
+					})
+					.catch(err => {
+						console.debug(err)
+						showError(t('scim_client', 'Failed to register server. Check the logs'))
+					})
+					.finally(() => {
+						this.registeringServer = false
+					})
+			}).catch(() => {
+				this.registeringServer = false
+				showError(t('scim_client', 'Password confirmation failed'))
+			})
 		},
 		updateServer() {
 			this.registeringServer = true
