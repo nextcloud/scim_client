@@ -37,16 +37,28 @@
 					:placeholder="t('scim_client', 'Server API Key')"
 					:aria-label="t('scim_client', 'Server API Key')" />
 			</div>
-			<NcButton
-				type="primary"
-				:disabled="!isFormValidated"
-				@click="isEdit ? updateServer() : registerServer()">
-				{{ isEdit ? t('scim_client', 'Save') : t('scim_client', 'Register') }}
-				<template #icon>
-					<Check v-if="!registeringServer" :size="20" />
-					<NcLoadingIcon v-else :size="20" />
-				</template>
-			</NcButton>
+			<div class="row">
+				<NcButton
+					type="primary"
+					:disabled="!isFormValidated"
+					@click="isEdit ? updateServer() : registerServer()">
+					{{ isEdit ? t('scim_client', 'Save') : t('scim_client', 'Register') }}
+					<template #icon>
+						<Check v-if="!registeringServer" :size="20" />
+						<NcLoadingIcon v-else :size="20" />
+					</template>
+				</NcButton>
+				<NcButton
+					type="secondary"
+					:disabled="!isServerDetailsValidated"
+					@click="checkServerConnection()">
+					{{ t('scim_client', 'Check connection') }}
+					<template #icon>
+						<Connection v-if="!checkingServerConnection" :size="20" />
+						<NcLoadingIcon v-else :size="20" />
+					</template>
+				</NcButton>
+			</div>
 		</div>
 	</NcModal>
 </template>
@@ -64,11 +76,13 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import Check from 'vue-material-design-icons/Check.vue'
+import Connection from 'vue-material-design-icons/Connection.vue'
 
 export default {
 	name: 'RegisterServerModal',
 	components: {
 		Check,
+		Connection,
 		NcButton,
 		NcInputField,
 		NcLoadingIcon,
@@ -98,6 +112,7 @@ export default {
 	},
 	data() {
 		return {
+			checkingServerConnection: false,
 			exampleUrl: 'https://api.example.com/scim/v2',
 			isEdit: this.server !== null,
 			registeringServer: false,
@@ -157,19 +172,30 @@ export default {
 		resetData() {
 			Object.assign(this.$data, this.$options.data.apply(this))
 		},
+		checkServerConnection() {
+			this.checkingServerConnection = true
+
+			axios.post(generateUrl('apps/scim_client/servers/verify'), { server: this._buildServerParams() })
+				.then(res => {
+					if (res.data.success) {
+						showSuccess(t('scim_client', 'Server connection successful'))
+					} else {
+						showError(t('scim_client', 'Failed to connect to server. Check the logs'))
+					}
+				})
+				.catch(err => {
+					console.debug(err)
+					showError(t('scim_client', 'Failed to check connection to server. Check the logs'))
+				})
+				.finally(() => {
+					this.checkingServerConnection = false
+				})
+		},
 		registerServer() {
 			this.registeringServer = true
 
 			confirmPassword().then(() => {
-				const params = {
-					server: {
-						name: this.serverName,
-						url: this.serverUrl,
-						api_key: this.serverApiKey,
-					},
-				}
-
-				axios.post(generateUrl('apps/scim_client/servers'), params)
+				axios.post(generateUrl('apps/scim_client/servers'), { params: this._buildServerParams() })
 					.then(res => {
 						if (res.data.success) {
 							showSuccess(t('scim_client', 'Server successfully registered'))
@@ -198,6 +224,13 @@ export default {
 
 			this.registeringServer = false
 		},
+		_buildServerParams() {
+			return {
+				name: this.serverName,
+				url: this.serverUrl,
+				api_key: this.serverApiKey,
+			}
+		},
 		closeModal() {
 			this.$emit('update:show', false)
 		},
@@ -214,7 +247,10 @@ export default {
 		width: 100%;
 	}
 
-	button {
+	.row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		margin-top: 20px;
 	}
 }
