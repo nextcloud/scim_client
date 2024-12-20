@@ -45,6 +45,10 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
+import { loadState } from '@nextcloud/initial-state'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -78,7 +82,7 @@ export default {
 		}
 	},
 	mounted() {
-		// TODO: get current server list from state
+		this.servers = loadState('scim_client', 'admin-server-list')
 	},
 	methods: {
 		showRegister() {
@@ -88,12 +92,8 @@ export default {
 			// TODO: update selected server config to database
 		},
 		getAllServers() {
-			// TODO: retrieve server list from database
-
-			// return axios.get(generateUrl('/apps/scim_client/servers'))
-			// .then(res => {
-			// this.$emit('update:servers', res.data.servers)
-			// })
+			return axios.get(generateUrl('/apps/scim_client/servers'))
+				.then(res => this.$emit('update:servers', res.data.servers))
 		},
 	},
 }
