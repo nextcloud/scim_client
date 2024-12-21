@@ -10,7 +10,7 @@
 		<NcSettingsSection
 			:name="t('scim_client', 'Registered Servers')"
 			:aria-label="t('scim_client', 'Registered Servers')">
-			<ServerList :servers.sync="servers" :save-options="saveOptions" />
+			<ServerList :servers.sync="servers" />
 		</NcSettingsSection>
 	</div>
 </template>
@@ -37,11 +37,6 @@ export default {
 	},
 	mounted() {
 		this.servers = loadState('scim_client', 'admin-server-list')
-	},
-	methods: {
-		saveOptions(values) {
-			// TODO: update selected server config to database
-		},
 	},
 }
 </script>
