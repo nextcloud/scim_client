@@ -6,7 +6,6 @@
 					v-for="server in servers"
 					:key="server.id"
 					:server="server"
-					:save-options="saveOptions"
 					:servers="servers"
 					:get-all-servers="getAllServers" />
 			</ul>
@@ -63,10 +62,6 @@ export default {
 			type: Array,
 			required: true,
 			default: () => [],
-		},
-		saveOptions: {
-			type: Function,
-			required: true,
 		},
 	},
 	data() {

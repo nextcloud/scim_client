@@ -81,10 +81,6 @@ export default {
 			required: true,
 			default: () => {},
 		},
-		saveOptions: {
-			type: Function,
-			required: true,
-		},
 		servers: {
 			type: Array,
 			required: true,
