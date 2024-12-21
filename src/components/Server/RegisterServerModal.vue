@@ -218,11 +218,35 @@ export default {
 			})
 		},
 		updateServer() {
+			if (!this.isEdit) {
+				console.debug('Logic error: cannot update server if unset')
+				return
+			}
+
 			this.registeringServer = true
 
-			// TODO: update server details in database
-
-			this.registeringServer = false
+			confirmPassword().then(() => {
+				axios.put(generateUrl(`apps/scim_client/servers/${this.server.id}`), { params: this._buildServerParams() })
+					.then(res => {
+						if (res.data.success) {
+							showSuccess(t('scim_client', 'Server successfully updated'))
+							this.closeModal()
+							this.getAllServers()
+						} else {
+							showError(t('scim_client', 'Failed to update server. Check the logs'))
+						}
+					})
+					.catch(err => {
+						console.debug(err)
+						showError(t('scim_client', 'Failed to update server. Check the logs'))
+					})
+					.finally(() => {
+						this.registeringServer = false
+					})
+			}).catch(() => {
+				this.registeringServer = false
+				showError(t('scim_client', 'Password confirmation failed'))
+			})
 		},
 		_buildServerParams() {
 			return {
