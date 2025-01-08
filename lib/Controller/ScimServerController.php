@@ -7,6 +7,7 @@ namespace OCA\ScimClient\Controller;
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Db\ScimServer;
 use OCA\ScimClient\Service\ScimApiService;
+use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -21,6 +22,7 @@ class ScimServerController extends ApiController {
 	public function __construct(
 		IRequest $request,
 		private readonly ScimApiService $scimApiService,
+		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
 		private readonly ICrypto $crypto,
 	) {
@@ -111,5 +113,19 @@ class ScimServerController extends ApiController {
 	#[FrontpageRoute(verb: 'POST', url: '/servers/verify')]
 	public function verifyNewScimServer(array $server): Response {
 		return new JSONResponse($this->scimApiService->verifyScimServer($server));
+	}
+
+	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/sync')]
+	public function syncScimServer(int $id): Response {
+		$params = [
+			'event' => 'ScimClientSyncRequest',
+			'server_id' => $id,
+		];
+		$event = $this->scimEventService->addScimEvent($params);
+
+		return new JSONResponse([
+			'success' => (bool)$event,
+			'server_id' => $id,
+		]);
 	}
 }

@@ -7,7 +7,7 @@
 				{{ server.url }}
 			</template>
 			<template #actions>
-				<NcActionButton :close-after-click="true" @click="showSyncModal()">
+				<NcActionButton :close-after-click="true" @click="syncServer(server)">
 					{{ t('scim_client', 'Sync') }}
 					<template #icon>
 						<Sync :size="20" />
@@ -27,14 +27,6 @@
 				</NcActionButton>
 			</template>
 		</NcListItem>
-		<!--
-		<SyncServerModal
-			v-show="showSyncDialog"
-			:server="server"
-			:syncing="syncing"
-			:sync-server="syncServer"
-			:show.sync="showSyncDialog" />
-		-->
 		<RegisterServerModal
 			:show.sync="showEditDialog"
 			:servers="servers"
@@ -64,7 +56,6 @@ import Sync from 'vue-material-design-icons/Sync.vue'
 
 import DeleteServerModal from './DeleteServerModal.vue'
 import RegisterServerModal from './RegisterServerModal.vue'
-// import SyncServerModal from './SyncServerModal.vue'
 
 export default {
 	name: 'ServerListItem',
@@ -76,7 +67,6 @@ export default {
 		Pencil,
 		RegisterServerModal,
 		Sync,
-		// SyncServerModal,
 	},
 	props: {
 		server: {
@@ -99,7 +89,6 @@ export default {
 			deleting: false,
 			showDeleteDialog: false,
 			showEditDialog: false,
-			showSyncDialog: false,
 			syncing: false,
 		}
 	},
@@ -107,9 +96,21 @@ export default {
 		syncServer(server) {
 			this.syncing = true
 
-			// TODO: manually sync server
-
-			this.syncing = false
+			axios.post(generateUrl(`apps/scim_client/servers/${server.id}/sync`))
+				.then(res => {
+					if (res.data.success) {
+						showSuccess(t('scim_client', 'Sync request successful. This may take a while'))
+					} else {
+						showError(t('scim_client', 'Sync request failed. Check the logs'))
+					}
+				})
+				.catch(err => {
+					console.debug(err)
+					showError(t('scim_client', 'Sync request failed. Check the logs'))
+				})
+				.finally(() => {
+					this.syncing = false
+				})
 		},
 		deleteServer(server) {
 			this.deleting = true
@@ -137,9 +138,6 @@ export default {
 				this.showDeleteDialog = false
 				showError(t('scim_client', 'Password confirmation failed'))
 			})
-		},
-		showSyncModal() {
-			this.showSyncDialog = true
 		},
 		showEditModal() {
 			this.showEditDialog = true
