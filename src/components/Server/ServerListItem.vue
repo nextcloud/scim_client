@@ -40,18 +40,21 @@
 			:servers="servers"
 			:get-all-servers="getAllServers"
 			:server="server" />
-		<!--
 		<DeleteServerModal
 			v-show="showDeleteDialog"
 			:server="server"
 			:deleting="deleting"
 			:delete-server="deleteServer"
 			:show.sync="showDeleteDialog" />
-		-->
 	</div>
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
+import { showSuccess, showError } from '@nextcloud/dialogs'
+import { confirmPassword } from '@nextcloud/password-confirmation'
+import { generateUrl } from '@nextcloud/router'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -59,14 +62,14 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Sync from 'vue-material-design-icons/Sync.vue'
 
-// import DeleteServerModal from './DeleteServerModal.vue'
+import DeleteServerModal from './DeleteServerModal.vue'
 import RegisterServerModal from './RegisterServerModal.vue'
 // import SyncServerModal from './SyncServerModal.vue'
 
 export default {
 	name: 'ServerListItem',
 	components: {
-		// DeleteServerModal,
+		DeleteServerModal,
 		NcActionButton,
 		NcListItem,
 		NcLoadingIcon,
@@ -111,9 +114,29 @@ export default {
 		deleteServer(server) {
 			this.deleting = true
 
-			// TODO: delete server from database
-
-			this.deleting = false
+			confirmPassword().then(() => {
+				axios.delete(generateUrl(`apps/scim_client/servers/${server.id}`))
+					.then(res => {
+						if (res.data.success) {
+							showSuccess(t('scim_client', 'Server successfully deleted'))
+							this.getAllServers()
+						} else {
+							showError(t('scim_client', 'Failed to delete server. Check the logs'))
+						}
+					})
+					.catch(err => {
+						console.debug(err)
+						showError(t('scim_client', 'Failed to delete server. Check the logs'))
+					})
+					.finally(() => {
+						this.deleting = false
+						this.showDeleteDialog = false
+					})
+			}).catch(() => {
+				this.deleting = false
+				this.showDeleteDialog = false
+				showError(t('scim_client', 'Password confirmation failed'))
+			})
 		},
 		showSyncModal() {
 			this.showSyncDialog = true
