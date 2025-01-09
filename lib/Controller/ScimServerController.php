@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\ScimClient\Controller;
 
 use OCA\ScimClient\AppInfo\Application;
+use OCA\ScimClient\Db\ScimEvent;
 use OCA\ScimClient\Db\ScimServer;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimEventService;
@@ -39,8 +40,17 @@ class ScimServerController extends ApiController {
 	public function registerScimServer(array $params): Response {
 		$server = $this->scimServerService->registerScimServer($params);
 
+		if (!$server) {
+			return new JSONResponse([
+				'success' => false,
+				'server' => null,
+			]);
+		}
+
+		$event = $this->_addFullSyncRequest($server->getId());
+
 		return new JSONResponse([
-			'success' => (bool)$server,
+			'success' => (bool)$event,
 			'server' => $server,
 		]);
 	}
@@ -117,15 +127,19 @@ class ScimServerController extends ApiController {
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/sync')]
 	public function syncScimServer(int $id): Response {
-		$params = [
-			'event' => 'ScimClientSyncRequest',
-			'server_id' => $id,
-		];
-		$event = $this->scimEventService->addScimEvent($params);
+		$event = $this->_addFullSyncRequest($id);
 
 		return new JSONResponse([
 			'success' => (bool)$event,
 			'server_id' => $id,
 		]);
+	}
+
+	private function _addFullSyncRequest(int $id): ?ScimEvent {
+		$params = [
+			'event' => 'ScimClientFullSyncRequest',
+			'server_id' => $id,
+		];
+		return $this->scimEventService->addScimEvent($params);
 	}
 }

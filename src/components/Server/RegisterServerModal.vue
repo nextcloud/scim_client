@@ -198,7 +198,7 @@ export default {
 				axios.post(generateUrl('apps/scim_client/servers'), { params: this._buildServerParams() })
 					.then(res => {
 						if (res.data.success) {
-							showSuccess(t('scim_client', 'Server successfully registered'))
+							showSuccess(t('scim_client', 'Server successfully registered, initial sync started'))
 							this.closeModal()
 							this.getAllServers()
 						} else {
