@@ -38,6 +38,7 @@ class Application extends App implements IBootstrap {
 	public const SCIM_VERSION = '2.0';
 	public const SCIM_API_SCHEMA = 'urn:ietf:params:scim:api:messages:' . self::SCIM_VERSION;
 	public const SCIM_CORE_SCHEMA = 'urn:ietf:params:scim:schemas:core:' . self::SCIM_VERSION;
+	public const SYNC_REQUEST_EVENT = 'ScimClientFullSyncRequest';
 
 	/** @psalm-suppress PossiblyUnusedMethod */
 	public function __construct() {
