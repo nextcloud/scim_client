@@ -32,7 +32,16 @@ class ScimServerController extends ApiController {
 
 	#[FrontpageRoute(verb: 'GET', url: '/servers')]
 	public function getAllScimServers(): Response {
-		return new JSONResponse($this->scimServerService->getRegisteredScimServers());
+		$servers = $this->scimServerService->getRegisteredScimServers();
+
+		foreach ($servers as &$server) {
+			// Mask API key with dummy secret if set
+			if (!empty($server['api_key'])) {
+				$server['api_key'] = Application::DUMMY_SECRET;
+			}
+		}
+
+		return new JSONResponse($servers);
 	}
 
 	#[PasswordConfirmationRequired]

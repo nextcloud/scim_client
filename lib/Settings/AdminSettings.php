@@ -22,8 +22,16 @@ class AdminSettings implements ISettings {
 	public function getForm() {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-admin-settings');
 
-		$serverList = $this->scimServerService->getRegisteredScimServers();
-		$this->initialStateService->provideInitialState('admin-server-list', $serverList);
+		$servers = $this->scimServerService->getRegisteredScimServers();
+
+		foreach ($servers as &$server) {
+			// Mask API key with dummy secret if set
+			if (!empty($server['api_key'])) {
+				$server['api_key'] = Application::DUMMY_SECRET;
+			}
+		}
+
+		$this->initialStateService->provideInitialState('admin-server-list', $servers);
 
 		return new TemplateResponse(Application::APP_ID, 'admin-settings');
 	}
