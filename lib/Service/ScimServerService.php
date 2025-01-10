@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\ScimClient\Service;
 
-use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Db\ScimServer;
 use OCA\ScimClient\Db\ScimServerMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -58,12 +57,12 @@ class ScimServerService {
 
 	public function getRegisteredScimServers(): array {
 		try {
-			return array_map(static function (ScimServer $s): array {
+			return array_map(function (ScimServer $s): array {
 				$server = $s->jsonSerialize();
 
-				// Mask API key with dummy secret if set
+				// Decrypt API key if set
 				if (!empty($server['api_key'])) {
-					$server['api_key'] = Application::DUMMY_SECRET;
+					$server['api_key'] = $this->crypto->decrypt($server['api_key']);
 				}
 
 				return $server;
