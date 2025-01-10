@@ -137,7 +137,7 @@ class ScimServerController extends ApiController {
 
 	private function _addFullSyncRequest(int $id): ?ScimEvent {
 		$params = [
-			'event' => 'ScimClientFullSyncRequest',
+			'event' => Application::SYNC_REQUEST_EVENT,
 			'server_id' => $id,
 		];
 		return $this->scimEventService->addScimEvent($params);
