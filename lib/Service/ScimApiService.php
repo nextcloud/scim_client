@@ -33,6 +33,16 @@ class ScimApiService {
 
 	/**
 	 * @param array $server
+	 * @param array $params
+	 * @return array
+	 * @throws PreConditionNotMetException
+	 */
+	public function syncScimServer(array $server, array $params): array {
+		return (array)$this->networkService->request($server, '/Bulk', $params, 'POST');
+	}
+
+	/**
+	 * @param array $server
 	 * @return array
 	 * @throws PreConditionNotMetException
 	 */
