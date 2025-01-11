@@ -50,6 +50,7 @@ class NetworkService {
 				'headers' => [
 					'Authorization' => 'Basic ' . $credentials,
 					'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+					'User-Agent' => Application::INTEGRATION_USER_AGENT,
 				],
 			];
 
