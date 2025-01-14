@@ -46,12 +46,21 @@ class ScimApiService {
 	 * @return array
 	 * @throws PreConditionNotMetException
 	 */
+	public function getScimServerConfig(array $server): array {
+		return (array)$this->networkService->request($server, '/ServiceProviderConfig', [], 'GET');
+	}
+
+	/**
+	 * @param array $server
+	 * @return array
+	 * @throws PreConditionNotMetException
+	 */
 	public function verifyScimServer(array $server): array {
-		$response = $this->networkService->request($server, '/ServiceProviderConfig', [], 'GET');
+		$response = $this->getScimServerConfig($server);
 
 		if (isset($response['error'])) {
 			$reponse['success'] = false;
-			return (array)$response;
+			return $response;
 		}
 
 		$hasScimSchema = $response['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
