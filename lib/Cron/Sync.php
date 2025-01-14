@@ -51,17 +51,24 @@ class Sync extends TimedJob {
 
 		// Do the update operation
 		if (count($updateEvents) > 0) {
-			if (count($updateServers) > 0) {
+			foreach ($updateServers as $server) {
+				$serverConfig = $this->scimApiService->getScimServerConfig($server);
 				$updateOperations = array_values(array_filter(array_map('self::_generateUpdateEventParams', $updateEvents)));
-				$params = [
-					'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-					'Operations' => $updateOperations,
-				];
 
-				if (count($params['Operations']) > 0) {
-					foreach ($updateServers as $server) {
-						$this->scimApiService->syncScimServer($server, $params);
-					}
+				// This assumes bulk operation is supported on the server
+				// TODO: check if bulk operation is supported here, revert to individual requests if not
+				$maxBulkOperations = $serverConfig['bulk']['maxOperations'];
+				if ($maxBulkOperations <= 0) {
+					continue;
+				}
+
+				while (count($updateOperations) > 0) {
+					$params = [
+						'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
+						'Operations' => array_slice($updateOperations, 0, $maxBulkOperations),
+					];
+					$this->scimApiService->syncScimServer($server, $params);
+					array_splice($updateOperations, 0, $maxBulkOperations);
 				}
 			}
 
