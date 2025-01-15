@@ -69,7 +69,7 @@ class ScimServerController extends ApiController {
 			$server = $this->scimServerService->getScimServer($id);
 			$params['api_key'] = $server->getApiKey() ?? '';
 		} elseif (!empty($apiKey)) {
-			// New password provided, encrypt it
+			// New API key provided, encrypt it
 			$params['api_key'] = $this->crypto->encrypt($apiKey);
 		}
 
@@ -78,7 +78,6 @@ class ScimServerController extends ApiController {
 		$updatedServer = new ScimServer($params);
 		$updatedServer = $this->scimServerService->updateScimServer($updatedServer);
 
-		// Check if update was successful before proceeding
 		if (!$updatedServer) {
 			return new JSONResponse([
 				'success' => false,
