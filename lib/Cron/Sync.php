@@ -6,6 +6,7 @@ namespace OCA\ScimClient\Cron;
 
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Db\ScimEvent;
+use OCA\ScimClient\Service\NetworkService;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
@@ -21,6 +22,7 @@ class Sync extends TimedJob {
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
+		private readonly NetworkService $networkService,
 		private readonly IUserManager $userManager,
 		private readonly LoggerInterface $logger,
 	) {
@@ -37,61 +39,35 @@ class Sync extends TimedJob {
 			return;
 		}
 
-		// Get only events for full server sync on requested servers
-		$syncEvents = array_filter($events, static fn (array $e): bool => $e['event'] === Application::SYNC_REQUEST_EVENT);
-		// All other events apply recent changes to remaining servers
-		$updateEvents = array_filter($events, static fn (array $e): bool => $e['event'] !== Application::SYNC_REQUEST_EVENT);
-
-		// Get only servers to be synced
 		$servers = $this->scimServerService->getRegisteredScimServers();
-		$syncServerIds = array_unique(array_map(static fn (array $e): int => $e['server_id'], $syncEvents));
-		$syncServers = array_filter($servers, fn (array $s): bool => in_array($s['id'], $syncServerIds));
-		// All other servers will receive recent changes only
-		$updateServers = array_filter($servers, fn (array $s): bool => !in_array($s['id'], $syncServerIds));
+		$operations = array_values(array_filter(array_map('self::_generateEventParams', $events)));
 
-		// Do the update operation
-		if (count($updateEvents) > 0) {
-			foreach ($updateServers as $server) {
-				$serverConfig = $this->scimApiService->getScimServerConfig($server);
-				$updateOperations = array_values(array_filter(array_map('self::_generateUpdateEventParams', $updateEvents)));
+		foreach ($servers as $server) {
+			$config = $this->scimApiService->getScimServerConfig($server);
 
-				// This assumes bulk operation is supported on the server
-				// TODO: check if bulk operation is supported here, revert to individual requests if not
-				$maxBulkOperations = $serverConfig['bulk']['maxOperations'];
-				if ($maxBulkOperations <= 0) {
-					continue;
-				}
+			$maxBulkOperations = $config['bulk']['maxOperations'];
+			$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations > 0;
 
-				while (count($updateOperations) > 0) {
-					$params = [
-						'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-						'Operations' => array_slice($updateOperations, 0, $maxBulkOperations),
-					];
-					$this->scimApiService->syncScimServer($server, $params);
-					array_splice($updateOperations, 0, $maxBulkOperations);
-				}
+			if (!$isBulkOperationsSupported) {
+				// TODO: add support for servers without bulk operations
+				continue;
 			}
 
-			// Cleanup processed update events
-			// TODO: keep the event instead if the corresponding operation is unsuccessful for at least one server, write error to server log
-			foreach ($updateEvents as $event) {
-				$this->scimEventService->deleteScimEvent(new ScimEvent($event));
-			}
+			$params = [
+				'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
+				'Operations' => $operations,
+			];
+			$this->networkService->request($server, '/Bulk', $params, 'POST');
 		}
 
-		// Do the sync operation
-		foreach ($syncServers as $server) {
-			// $this->scimApiService->syncScimServer($server, $this->_generateSyncEventParams($server));
-		}
-
-		// Cleanup processed sync events
-		// TODO: keep the events instead if the corresponding server operation is unsuccessful, write error to server log
-		foreach ($syncEvents as $event) {
+		// Cleanup processed update events
+		// TODO: keep the event instead if the corresponding operation is unsuccessful for at least one server, write error to server log
+		foreach ($events as $event) {
 			$this->scimEventService->deleteScimEvent(new ScimEvent($event));
 		}
 	}
 
-	private function _generateUpdateEventParams(array $event): array {
+	private function _generateEventParams(array $event): array {
 		if ($event['event'] === 'UserAddedEvent') {
 			// TODO: handle event
 			return [];
@@ -125,7 +101,6 @@ class Sync extends TimedJob {
 					'externalId' => $event['user_id'],
 					'userName' => $event['user_id'],
 					'displayName' => $newUser->getDisplayName(),
-					'password' => $event['password'],
 					'emails' => is_string($email) && mb_strlen($email) ? [['value' => $email]] : [],
 				],
 			];
@@ -176,13 +151,6 @@ class Sync extends TimedJob {
 			sprintf('Unable to process unknown event (%s), skipping.', $event['event']),
 			['event' => $event],
 		);
-		return [];
-	}
-
-	private function _generateSyncEventParams(array $server): array {
-		// TODO: get all Nextcloud users/groups, create a POST/PUT operation for each
-		// TODO: check if user/group already exists in server, create/update as appropriate
-
 		return [];
 	}
 }
