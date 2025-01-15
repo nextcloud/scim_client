@@ -131,11 +131,6 @@ class Sync extends TimedJob {
 			return [];
 		}
 
-		if ($event['event'] === 'PasswordUpdatedEvent') {
-			// TODO: handle event
-			return [];
-		}
-
 		if ($event['event'] === 'SubAdminAddedEvent') {
 			// TODO: handle event
 			return [];

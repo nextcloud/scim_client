@@ -27,7 +27,6 @@ class UserCreatedListener implements IEventListener {
 		$params = [
 			'event' => 'UserCreatedEvent',
 			'user_id' => $event->getUid(),
-			'password' => $event->getPassword(),
 		];
 
 		$this->scimEventService->addScimEvent($params);
