@@ -20,10 +20,6 @@ class ScimEventService {
 	}
 
 	public function addScimEvent(array $params): ?ScimEvent {
-		if (!empty($params['password'])) {
-			$params['password'] = $this->crypto->encrypt($params['password']);
-		}
-
 		try {
 			return $this->mapper->insert(new ScimEvent($params));
 		} catch (Exception $e) {
@@ -43,16 +39,7 @@ class ScimEventService {
 
 	public function getScimEvents(): array {
 		try {
-			return array_map(function (ScimEvent $s): array {
-				$event = $s->jsonSerialize();
-
-				// Decrypt password if set
-				if (!empty($event['password'])) {
-					$event['password'] = $this->crypto->decrypt($event['password']);
-				}
-
-				return $event;
-			}, $this->mapper->findAll());
+			return array_map(static fn (ScimEvent $s): array => $s->jsonSerialize(), $this->mapper->findAll());
 		} catch (Exception $e) {
 			$this->logger->debug('Failed to get SCIM events. Error: ' . $e->getMessage(), ['exception' => $e]);
 			return [];
