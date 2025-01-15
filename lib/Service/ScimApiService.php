@@ -56,15 +56,15 @@ class ScimApiService {
 	 * @throws PreConditionNotMetException
 	 */
 	public function verifyScimServer(array $server): array {
-		$response = $this->getScimServerConfig($server);
+		$config = $this->getScimServerConfig($server);
 
-		if (isset($response['error'])) {
+		if (isset($config['error'])) {
 			$reponse['success'] = false;
-			return $response;
+			return $config;
 		}
 
-		$hasScimSchema = $response['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
-		$hasBulkOperation = $response['bulk']['supported'];
+		$hasScimSchema = $config['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
+		$isBulkOperationsSupported = $config['bulk']['supported'] && $config['bulk']['maxOperations'] > 0;
 
 		if (!$hasScimSchema) {
 			return [
@@ -73,7 +73,7 @@ class ScimApiService {
 			];
 		}
 
-		if (!$hasBulkOperation) {
+		if (!$isBulkOperationsSupported) {
 			return [
 				'error' => 'Bulk operations feature is required',
 				'success' => false,
