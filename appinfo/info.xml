@@ -22,7 +22,11 @@ Simply add your SCIM servers in the admin settings, and the app will automatical
 		<job>OCA\ScimClient\Cron\Update</job>
 	</background-jobs>
 	<commands>
+		<command>OCA\ScimClient\Command\Server\ListServers</command>
+		<command>OCA\ScimClient\Command\Server\Register</command>
 		<command>OCA\ScimClient\Command\Server\Sync</command>
+		<command>OCA\ScimClient\Command\Server\Unregister</command>
+		<command>OCA\ScimClient\Command\Server\Update</command>
 	</commands>
 	<settings>
 		<admin>OCA\ScimClient\Settings\AdminSettings</admin>
