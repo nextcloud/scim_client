@@ -26,13 +26,13 @@ class ScimApiService {
 
 	public function __construct(
 		IClientService $clientService,
-		private LoggerInterface $logger,
-		private IL10N $l10n,
-		private IURLGenerator $urlGenerator,
-		private ICrypto $crypto,
-		private IGroupManager $groupManager,
-		private IUserManager $userManager,
-		private NetworkService $networkService,
+		private readonly LoggerInterface $logger,
+		private readonly IL10N $l10n,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly ICrypto $crypto,
+		private readonly IGroupManager $groupManager,
+		private readonly IUserManager $userManager,
+		private readonly NetworkService $networkService,
 	) {
 		$this->client = $clientService->newClient();
 	}

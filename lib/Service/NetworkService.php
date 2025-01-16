@@ -27,9 +27,9 @@ class NetworkService {
 
 	public function __construct(
 		IClientService $clientService,
-		private IConfig $config,
-		private LoggerInterface $logger,
-		private IL10N $l10n,
+		private readonly IConfig $config,
+		private readonly LoggerInterface $logger,
+		private readonly IL10N $l10n,
 	) {
 		$this->client = $clientService->newClient();
 	}
