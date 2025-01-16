@@ -9,6 +9,7 @@ use OCA\ScimClient\Db\ScimServer;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
+use OCA\ScimClient\Service\ScimSyncRequestService;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
@@ -24,6 +25,7 @@ class ScimServerController extends ApiController {
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
+		private readonly ScimSyncRequestService $scimSyncRequestService,
 		private readonly ICrypto $crypto,
 	) {
 		parent::__construct(Application::APP_ID, $request);
@@ -49,9 +51,8 @@ class ScimServerController extends ApiController {
 		$server = $this->scimServerService->registerScimServer($params);
 
 		if (isset($server)) {
-			$server = $server->jsonSerialize();
-			$server['api_key'] = $this->crypto->decrypt($server['api_key']);
-			$this->scimApiService->syncScimServer($server);
+			$syncParams = ['server_id' => $server->getId()];
+			$this->scimSyncRequestService->addScimSyncRequest($syncParams);
 		}
 
 		return new JSONResponse([
@@ -131,17 +132,12 @@ class ScimServerController extends ApiController {
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/sync')]
 	public function syncScimServer(int $id): Response {
-		$server = $this->scimServerService->getScimServer($id);
-
-		if (isset($server)) {
-			$server = $server->jsonSerialize();
-			$server['api_key'] = $this->crypto->decrypt($server['api_key']);
-			$this->scimApiService->syncScimServer($server);
-		}
+		$params = ['server_id' => $id];
+		$request = $this->scimSyncRequestService->addScimSyncRequest($params);
 
 		return new JSONResponse([
-			'success' => (bool)$server,
-			'server_id' => $id,
+			'success' => isset($request),
+			'request' => $request,
 		]);
 	}
 }
