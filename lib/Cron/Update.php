@@ -75,11 +75,12 @@ class Update extends TimedJob {
 		if ($event['group_id']) {
 			// Get the corresponding group ID on the SCIM server,
 			// or use bulk ID if group hasn't been created yet
-			$groupResults = $this->networkService->request($server, '/Groups', ['attributes' => 'externalId'], 'GET');
-			$serverGroups = $groupResults['Resources'];
-			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $event['group_id'] === $g['externalId']);
-			$serverGroup = array_shift($serverGroupResults);
-			$groupId = $serverGroup ? $serverGroup['id'] : 'bulkId:' . $event['group_id'];
+			$groupResults = $this->networkService->request($server, '/Groups', ['filter' => sprintf('externalId eq "%s"', $event['group_id'])], 'GET');
+			if (!isset($groupResults) || isset($groupResults['error'])) {
+				return [];
+			}
+			$group = array_shift($groupResults['Resources']);
+			$groupId = $group ? $group['id'] : 'bulkId:' . $event['group_id'];
 		}
 
 		if ($event['user_id']) {
