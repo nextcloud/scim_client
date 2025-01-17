@@ -12,7 +12,6 @@ use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
-use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class Update extends TimedJob {
@@ -23,7 +22,6 @@ class Update extends TimedJob {
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
 		private readonly NetworkService $networkService,
-		private readonly IUserManager $userManager,
 		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($time);
@@ -79,18 +77,6 @@ class Update extends TimedJob {
 		}
 
 		if ($event['event'] === 'UserCreatedEvent') {
-			$newUser = $this->userManager->get($event['user_id']);
-
-			if (!$newUser) {
-				$this->logger->warning(
-					sprintf('Unable to find user with ID "%s", skipping.', $event['user_id']),
-					['event' => $event],
-				);
-				return [];
-			}
-
-			$email = $newUser->getEmailAddress();
-
 			return [
 				'method' => 'POST',
 				'path' => '/Users',
@@ -100,8 +86,9 @@ class Update extends TimedJob {
 					'active' => true,
 					'externalId' => $event['user_id'],
 					'userName' => $event['user_id'],
-					'displayName' => $newUser->getDisplayName(),
-					'emails' => is_string($email) && mb_strlen($email) ? [['value' => $email]] : [],
+					'name' => ['formatted' => $event['user_id']],
+					// Some servers may require an email address, so use a temporary one here
+					'emails' => [['value' => 'change.me@example.com']],
 				],
 			];
 		}
