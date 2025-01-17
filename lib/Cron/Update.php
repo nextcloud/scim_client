@@ -16,6 +16,12 @@ use Psr\Log\LoggerInterface;
 
 class Update extends TimedJob {
 
+	private const ALLOWED_USER_ATTRIBUTES = [
+		'active' => 'active',
+		'displayName' => 'name.formatted',
+		'eMailAddress' => 'emails.value',
+	];
+
 	public function __construct(
 		ITimeFactory $time,
 		private readonly ScimApiService $scimApiService,
@@ -38,7 +44,6 @@ class Update extends TimedJob {
 		}
 
 		$servers = $this->scimServerService->getRegisteredScimServers();
-		$operations = array_values(array_filter(array_map('self::_generateEventParams', $events)));
 
 		foreach ($servers as $server) {
 			$config = $this->scimApiService->getScimServerConfig($server);
@@ -51,6 +56,7 @@ class Update extends TimedJob {
 				continue;
 			}
 
+			$operations = array_values(array_filter(array_map(fn (array $e): array => self::_generateEventParams($e, $server), $events)));
 			$params = [
 				'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
 				'Operations' => $operations,
@@ -65,15 +71,39 @@ class Update extends TimedJob {
 		}
 	}
 
-	private function _generateEventParams(array $event): array {
+	private function _generateEventParams(array $event, array $server): array {
 		if ($event['event'] === 'UserAddedEvent') {
 			// TODO: handle event
 			return [];
 		}
 
 		if ($event['event'] === 'UserChangedEvent') {
-			// TODO: handle event
-			return [];
+			if (!in_array($event['feature'], array_keys(self::ALLOWED_USER_ATTRIBUTES))) {
+				return [];
+			}
+
+			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $event['user_id'])], 'GET');
+			if (!isset($userResults) || isset($userResults['error'])) {
+				return [];
+			}
+
+			$user = array_shift($userResults['Resources']);
+			$userId = $user ? $user['id'] : 'bulkId:' . $event['user_id'];
+
+			return [
+				'method' => 'PATCH',
+				'path' => '/Users/' . $userId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'replace',
+							'path' => self::ALLOWED_USER_ATTRIBUTES[$event['feature']],
+							'value' => $event['value'],
+						],
+					],
+				],
+			];
 		}
 
 		if ($event['event'] === 'UserCreatedEvent') {
