@@ -215,16 +215,6 @@ class Update extends TimedJob {
 			];
 		}
 
-		if ($event['event'] === 'SubAdminAddedEvent') {
-			// TODO: handle event
-			return [];
-		}
-
-		if ($event['event'] === 'SubAdminRemovedEvent') {
-			// TODO: handle event
-			return [];
-		}
-
 		// Default case (unknown event)
 		$this->logger->warning(
 			sprintf('Unable to process unknown event (%s), skipping.', $event['event']),
