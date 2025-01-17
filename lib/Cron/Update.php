@@ -72,16 +72,19 @@ class Update extends TimedJob {
 	}
 
 	private function _generateEventParams(array $event, array $server): array {
-		if ($event['event'] === 'UserAddedEvent') {
-			// TODO: handle event
-			return [];
+		if ($event['group_id']) {
+			// Get the corresponding group ID on the SCIM server,
+			// or use bulk ID if group hasn't been created yet
+			$groupResults = $this->networkService->request($server, '/Groups', ['attributes' => 'displayName'], 'GET');
+			$serverGroups = $groupResults['Resources'];
+			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $event['group_id'] === $g['displayName']);
+			$serverGroup = array_shift($serverGroupResults);
+			$groupId = $serverGroup ? $serverGroup['id'] : 'bulkId:' . $event['group_id'];
 		}
 
-		if ($event['event'] === 'UserChangedEvent') {
-			if (!in_array($event['feature'], array_keys(self::ALLOWED_USER_ATTRIBUTES))) {
-				return [];
-			}
-
+		if ($event['user_id']) {
+			// Get the corresponding user ID on the SCIM server,
+			// or use bulk ID if user hasn't been created yet
 			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $event['user_id'])], 'GET');
 			if (!isset($userResults) || isset($userResults['error'])) {
 				return [];
@@ -89,6 +92,29 @@ class Update extends TimedJob {
 
 			$user = array_shift($userResults['Resources']);
 			$userId = $user ? $user['id'] : 'bulkId:' . $event['user_id'];
+		}
+
+		if ($event['event'] === 'UserAddedEvent') {
+			return [
+				'method' => 'PATCH',
+				'path' => '/Groups/' . $groupId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'add',
+							'path' => 'members',
+							'value' => [['value' => $userId]],
+						],
+					],
+				],
+			];
+		}
+
+		if ($event['event'] === 'UserChangedEvent') {
+			if (!in_array($event['feature'], array_keys(self::ALLOWED_USER_ATTRIBUTES))) {
+				return [];
+			}
 
 			return [
 				'method' => 'PATCH',
