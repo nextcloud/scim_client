@@ -123,7 +123,9 @@ class ScimApiService {
 					'active' => $user->isEnabled(),
 					'externalId' => $userId,
 					'userName' => $userId,
-					'displayName' => $user->getDisplayName(),
+					'name' => [
+						'formatted' => $user->getDisplayName(),
+					],
 					'emails' => is_string($email) && mb_strlen($email) ? [['value' => $email]] : [],
 				],
 			];
