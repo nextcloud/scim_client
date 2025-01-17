@@ -150,28 +150,68 @@ class Update extends TimedJob {
 		}
 
 		if ($event['event'] === 'UserDeletedEvent') {
-			// TODO: handle event
-			return [];
+			return [
+				'method' => 'DELETE',
+				'path' => '/Users/' . $userId,
+			];
 		}
 
 		if ($event['event'] === 'UserRemovedEvent') {
-			// TODO: handle event
-			return [];
+			return [
+				'method' => 'PATCH',
+				'path' => '/Groups/' . $groupId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'remove',
+							'path' => 'members',
+							'value' => [['value' => $userId]],
+						],
+					],
+				],
+			];
 		}
 
 		if ($event['event'] === 'GroupChangedEvent') {
-			// TODO: handle event
-			return [];
+			if ($event['feature'] !== 'displayName') {
+				// Only displayName attribute is supported for now
+				return [];
+			}
+
+			return [
+				'method' => 'PATCH',
+				'path' => '/Groups/' . $groupId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'replace',
+							'path' => $event['feature'],
+							'value' => $event['value'],
+						],
+					],
+				],
+			];
 		}
 
 		if ($event['event'] === 'GroupCreatedEvent') {
-			// TODO: handle event
-			return [];
+			return [
+				'method' => 'POST',
+				'path' => '/Groups',
+				'bulkId' => $event['group_id'],
+				'data' => [
+					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
+					'displayName' => $event['group_id'],
+				],
+			];
 		}
 
 		if ($event['event'] === 'GroupDeletedEvent') {
-			// TODO: handle event
-			return [];
+			return [
+				'method' => 'DELETE',
+				'path' => '/Groups/' . $groupId,
+			];
 		}
 
 		if ($event['event'] === 'SubAdminAddedEvent') {
