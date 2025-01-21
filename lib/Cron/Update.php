@@ -74,25 +74,14 @@ class Update extends TimedJob {
 	private function _generateEventParams(array $event, array $server): array {
 		if ($event['group_id']) {
 			// Get the corresponding group ID on the SCIM server,
-			// or use bulk ID if group hasn't been created yet
-			$groupResults = $this->networkService->request($server, '/Groups', ['filter' => sprintf('externalId eq "%s"', $event['group_id'])], 'GET');
-			if (!isset($groupResults) || isset($groupResults['error'])) {
-				return [];
-			}
-			$group = array_shift($groupResults['Resources']);
-			$groupId = $group ? $group['id'] : ('bulkId:' . $event['group_id']);
+			// or use a bulk ID if group hasn't been created yet
+			$groupId = $this->scimApiService->getScimServerGID($server, $event['group_id']) ?: ('bulkId:' . $event['group_id']);
 		}
 
 		if ($event['user_id']) {
 			// Get the corresponding user ID on the SCIM server,
-			// or use bulk ID if user hasn't been created yet
-			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $event['user_id'])], 'GET');
-			if (!isset($userResults) || isset($userResults['error'])) {
-				return [];
-			}
-
-			$user = array_shift($userResults['Resources']);
-			$userId = $user ? $user['id'] : ('bulkId:' . $event['user_id']);
+			// or use a bulk ID if user hasn't been created yet
+			$userId = $this->scimApiService->getScimServerUID($server, $event['user_id']) ?: ('bulkId:' . $event['user_id']);
 		}
 
 		if ($event['event'] === 'UserAddedEvent') {

@@ -36,6 +36,48 @@ class ScimApiService {
 
 	/**
 	 * @param array $server
+	 * @param string $userId
+	 * @return string
+	 * @throws PreConditionNotMetException
+	 */
+	public function getScimServerUID(array $server, string $userId): string {
+		$params = [
+			'filter' => sprintf('externalId eq "%s"', $userId),
+		];
+		$results = $this->networkService->request($server, '/Users', $params, 'GET');
+		$this->logger->debug('SCIM /Users GET', ['responseBody' => $results]);
+
+		if (!isset($results) || isset($results['error'])) {
+			return '';
+		}
+
+		$user = array_shift($results['Resources']);
+		return $user['id'] ?? '';
+	}
+
+	/**
+	 * @param array $server
+	 * @param string $groupId
+	 * @return string
+	 * @throws PreConditionNotMetException
+	 */
+	public function getScimServerGID(array $server, string $groupId): string {
+		$params = [
+			'filter' => sprintf('externalId eq "%s"', $groupId),
+		];
+		$results = $this->networkService->request($server, '/Groups', $params, 'GET');
+		$this->logger->debug('SCIM /Groups GET', ['responseBody' => $results]);
+
+		if (!isset($results) || isset($results['error'])) {
+			return '';
+		}
+
+		$group = array_shift($results['Resources']);
+		return $group['id'] ?? '';
+	}
+
+	/**
+	 * @param array $server
 	 * @return array
 	 * @throws PreConditionNotMetException
 	 */
@@ -96,19 +138,11 @@ class ScimApiService {
 			// If user already exists in server, replace existing user, otherwise create new user
 			$userId = $user->getUID();
 			$email = $user->getEmailAddress();
-
-			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $userId)], 'GET');
-			$this->logger->debug('SCIM /Users GET', ['responseBody' => $userResults]);
-			if (!isset($userResults) || isset($userResults['error'])) {
-				return [];
-			}
-
-			$userExists = $userResults['totalResults'] > 0;
-			$userPath = $userExists ? ('/' . $userResults['Resources'][0]['id']) : '';
+			$serverId = $this->getScimServerUID($server, $userId);
 
 			return [
-				'method' => $userExists ? 'PUT' : 'POST',
-				'path' => '/Users' . $userPath,
+				'method' => $serverId ? 'PUT' : 'POST',
+				'path' => '/Users' . ($serverId ? ('/' . $serverId) : ''),
 				'bulkId' => $userId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
@@ -118,31 +152,27 @@ class ScimApiService {
 					'name' => [
 						'formatted' => $user->getDisplayName(),
 					],
-					'emails' => is_string($email) && mb_strlen($email) ? [['value' => $email]] : [],
+					'emails' => $email ? [['value' => $email]] : [],
 				],
 			];
 		}, $users);
 
-		$groupResults = $this->networkService->request($server, '/Groups', ['attributes' => 'externalId,displayName'], 'GET');
-		$this->logger->debug('SCIM /Groups GET', ['responseBody' => $groupResults]);
-		$serverGroups = $groupResults['Resources'];
-
-		$groupOperations = array_map(function (IGroup $group) use ($serverGroups): array {
+		$groupOperations = array_map(function (IGroup $group) use ($server): array {
 			$operations = [];
 
-			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $group->getGID() === $g['externalId']);
-			$serverGroup = array_shift($serverGroupResults);
+			$groupId = $group->getGID();
+			$serverId = $this->getScimServerGID($server, $groupId);
 
-			if (is_null($serverGroup)) {
+			if (!$serverId) {
 				// Group does not exist in server yet, create it first
 				$operations[] = [
 					'method' => 'POST',
 					'path' => '/Groups',
-					'bulkId' => $group->getGID(),
+					'bulkId' => $groupId,
 					'data' => [
 						'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
 						'displayName' => $group->getDisplayName(),
-						'externalId' => $group->getGID(),
+						'externalId' => $groupId,
 					],
 				];
 			}
@@ -157,7 +187,7 @@ class ScimApiService {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . (isset($serverGroup) ? $serverGroup['id'] : ('bulkId:' . $group->getGID())),
+					'path' => '/Groups/' . ($serverId ?: ('bulkId:' . $groupId)),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,
