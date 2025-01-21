@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace OCA\ScimClient\Service;
 
 use OCA\ScimClient\AppInfo\Application;
-use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\IL10N;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
-use OCP\Security\ICrypto;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -22,17 +18,12 @@ use Psr\Log\LoggerInterface;
  */
 class ScimApiService {
 
-	private IClient $client;
-
 	public function __construct(
 		IClientService $clientService,
-		private readonly LoggerInterface $logger,
-		private readonly IL10N $l10n,
-		private readonly IURLGenerator $urlGenerator,
-		private readonly ICrypto $crypto,
 		private readonly IGroupManager $groupManager,
 		private readonly IUserManager $userManager,
 		private readonly NetworkService $networkService,
+		private readonly LoggerInterface $logger,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -55,8 +46,11 @@ class ScimApiService {
 		$config = $this->getScimServerConfig($server);
 
 		if (isset($config['error'])) {
-			$reponse['success'] = false;
-			return $config;
+			return [
+				'error' => 'Unable to fetch SCIM server config',
+				'response' => $config,
+				'success' => false,
+			];
 		}
 
 		$hasScimSchema = $config['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
@@ -107,6 +101,7 @@ class ScimApiService {
 			$email = $user->getEmailAddress();
 
 			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $userId)], 'GET');
+			$this->logger->debug('SCIM /Users GET', ['responseBody' => $userResults]);
 			if (!isset($userResults) || isset($userResults['error'])) {
 				return [];
 			}
@@ -131,14 +126,15 @@ class ScimApiService {
 			];
 		}, $users);
 
-		$groupResults = $this->networkService->request($server, '/Groups', ['attributes' => 'displayName'], 'GET');
+		$groupResults = $this->networkService->request($server, '/Groups', ['attributes' => 'externalId,displayName'], 'GET');
+		$this->logger->debug('SCIM /Groups GET', ['responseBody' => $groupResults]);
 		$serverGroups = $groupResults['Resources'];
 
 		$groupOperations = array_map(function (IGroup $group) use ($serverGroups): array {
 			$operations = [];
 
 			$displayName = $group->getDisplayName();
-			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $displayName === $g['displayName']);
+			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $group->getGID() === $g['externalId']);
 			$serverGroup = array_shift($serverGroupResults);
 
 			if (is_null($serverGroup)) {
@@ -146,10 +142,11 @@ class ScimApiService {
 				$operations[] = [
 					'method' => 'POST',
 					'path' => '/Groups',
-					'bulkId' => $displayName,
+					'bulkId' => $group->getGID(),
 					'data' => [
 						'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
 						'displayName' => $displayName,
+						'externalId' => $group->getGID(),
 					],
 				];
 			}
@@ -164,7 +161,7 @@ class ScimApiService {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . (isset($serverGroup) ? $serverGroup['id'] : 'bulkId:' . $displayName),
+					'path' => '/Groups/' . (isset($serverGroup) ? $serverGroup['id'] : 'bulkId:' . $group->getGID()),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,
@@ -181,6 +178,7 @@ class ScimApiService {
 			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
 			'Operations' => array_values(array_merge($userOperations, ...$groupOperations)),
 		];
-		$this->networkService->request($server, '/Bulk', $params, 'POST');
+		$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
+		$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
 	}
 }
