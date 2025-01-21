@@ -104,7 +104,7 @@ class ScimApiService {
 			}
 
 			$userExists = $userResults['totalResults'] > 0;
-			$userPath = $userExists ? '/' . $userResults['Resources'][0]['id'] : '';
+			$userPath = $userExists ? ('/' . $userResults['Resources'][0]['id']) : '';
 
 			return [
 				'method' => $userExists ? 'PUT' : 'POST',
@@ -130,7 +130,6 @@ class ScimApiService {
 		$groupOperations = array_map(function (IGroup $group) use ($serverGroups): array {
 			$operations = [];
 
-			$displayName = $group->getDisplayName();
 			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $group->getGID() === $g['externalId']);
 			$serverGroup = array_shift($serverGroupResults);
 
@@ -142,7 +141,7 @@ class ScimApiService {
 					'bulkId' => $group->getGID(),
 					'data' => [
 						'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
-						'displayName' => $displayName,
+						'displayName' => $group->getDisplayName(),
 						'externalId' => $group->getGID(),
 					],
 				];
@@ -158,7 +157,7 @@ class ScimApiService {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . (isset($serverGroup) ? $serverGroup['id'] : 'bulkId:' . $group->getGID()),
+					'path' => '/Groups/' . (isset($serverGroup) ? $serverGroup['id'] : ('bulkId:' . $group->getGID())),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,

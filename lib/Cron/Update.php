@@ -80,7 +80,7 @@ class Update extends TimedJob {
 				return [];
 			}
 			$group = array_shift($groupResults['Resources']);
-			$groupId = $group ? $group['id'] : 'bulkId:' . $event['group_id'];
+			$groupId = $group ? $group['id'] : ('bulkId:' . $event['group_id']);
 		}
 
 		if ($event['user_id']) {
@@ -92,7 +92,7 @@ class Update extends TimedJob {
 			}
 
 			$user = array_shift($userResults['Resources']);
-			$userId = $user ? $user['id'] : 'bulkId:' . $event['user_id'];
+			$userId = $user ? $user['id'] : ('bulkId:' . $event['user_id']);
 		}
 
 		if ($event['event'] === 'UserAddedEvent') {
