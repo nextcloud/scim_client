@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace OCA\ScimClient\Service;
 
 use OCA\ScimClient\AppInfo\Application;
-use OCP\Http\Client\IClientService;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -19,13 +18,11 @@ use Psr\Log\LoggerInterface;
 class ScimApiService {
 
 	public function __construct(
-		IClientService $clientService,
 		private readonly IGroupManager $groupManager,
 		private readonly IUserManager $userManager,
 		private readonly NetworkService $networkService,
 		private readonly LoggerInterface $logger,
 	) {
-		$this->client = $clientService->newClient();
 	}
 
 	/**
