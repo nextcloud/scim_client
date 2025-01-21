@@ -7,7 +7,7 @@
 	<description>Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.
 
 Simply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers.</description>
-	<version>0.1.1</version>
+	<version>1.0.0</version>
 	<licence>agpl</licence>
 	<author mail="contact@edward.ly" homepage="https://edward.ly/">Edward Ly</author>
 	<namespace>ScimClient</namespace>
