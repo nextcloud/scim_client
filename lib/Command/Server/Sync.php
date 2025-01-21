@@ -42,7 +42,14 @@ class Sync extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		try {
 			$name = $input->getArgument('name');
-			$server = $this->scimServerService->getScimServerByName($name)->jsonSerialize();
+			$server = $this->scimServerService->getScimServerByName($name);
+
+			if (!$server) {
+				$output->writeln(sprintf('SCIM server %s not found.', $name));
+				return Command::FAILURE;
+			}
+
+			$server = $server->jsonSerialize();
 			$server['api_key'] = $this->crypto->decrypt($server['api_key']);
 			$this->scimApiService->syncScimServer($server);
 		} catch (\Exception $e) {
