@@ -168,13 +168,14 @@ class ScimApiService {
 			return $operations;
 		}, $groups);
 
-		// Try sending the bulk operation regardless of $maxBulkOperations value
-		// All operations should be done in a single bulk request so that the bulkIds are correctly referenced
+		// TODO: split bulk request according to $maxBulkOperations and adjust bulk/server IDs accordingly
 		$params = [
 			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
 			'Operations' => array_values(array_merge($userOperations, ...$groupOperations)),
 		];
 		$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
 		$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
+
+		// TODO: parse response and handle any errors from each operation
 	}
 }
