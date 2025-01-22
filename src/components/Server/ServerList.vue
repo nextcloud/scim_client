@@ -1,5 +1,6 @@
 <template>
 	<div class="server-list-container">
+		<h5>{{ t('scim_client', 'Registered Servers') }}</h5>
 		<div class="server-list">
 			<ul v-if="servers.length" :aria-label="t('scim_client', 'Registered servers list')">
 				<ServerListItem
