@@ -6,7 +6,6 @@ namespace OCA\ScimClient\Cron;
 
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Db\ScimEvent;
-use OCA\ScimClient\Service\NetworkService;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
@@ -27,7 +26,6 @@ class Update extends TimedJob {
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
-		private readonly NetworkService $networkService,
 		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($time);
@@ -39,7 +37,7 @@ class Update extends TimedJob {
 	protected function run($argument): void {
 		$events = $this->scimEventService->getScimEvents();
 
-		if (count($events) === 0) {
+		if (!$events) {
 			return;
 		}
 
@@ -49,19 +47,15 @@ class Update extends TimedJob {
 			$config = $this->scimApiService->getScimServerConfig($server);
 
 			$maxBulkOperations = $config['bulk']['maxOperations'];
-			$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations > 0;
+			$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
 			if (!$isBulkOperationsSupported) {
 				// TODO: add support for servers without bulk operations
 				continue;
 			}
 
-			$operations = array_values(array_filter(array_map(fn (array $e): array => self::_generateEventParams($e, $server), $events)));
-			$params = [
-				'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-				'Operations' => $operations,
-			];
-			$this->networkService->request($server, '/Bulk', $params, 'POST');
+			$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
+			$this->scimApiService->sendBulkRequest($server, array_values(array_filter($operations)));
 		}
 
 		// Cleanup processed update events
@@ -74,25 +68,14 @@ class Update extends TimedJob {
 	private function _generateEventParams(array $event, array $server): array {
 		if ($event['group_id']) {
 			// Get the corresponding group ID on the SCIM server,
-			// or use bulk ID if group hasn't been created yet
-			$groupResults = $this->networkService->request($server, '/Groups', ['filter' => sprintf('externalId eq "%s"', $event['group_id'])], 'GET');
-			if (!isset($groupResults) || isset($groupResults['error'])) {
-				return [];
-			}
-			$group = array_shift($groupResults['Resources']);
-			$groupId = $group ? $group['id'] : 'bulkId:' . $event['group_id'];
+			// or use a bulk ID if group hasn't been created yet
+			$groupId = $this->scimApiService->getScimServerGID($server, $event['group_id']) ?: ('bulkId:' . $event['group_id']);
 		}
 
 		if ($event['user_id']) {
 			// Get the corresponding user ID on the SCIM server,
-			// or use bulk ID if user hasn't been created yet
-			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $event['user_id'])], 'GET');
-			if (!isset($userResults) || isset($userResults['error'])) {
-				return [];
-			}
-
-			$user = array_shift($userResults['Resources']);
-			$userId = $user ? $user['id'] : 'bulkId:' . $event['user_id'];
+			// or use a bulk ID if user hasn't been created yet
+			$userId = $this->scimApiService->getScimServerUID($server, $event['user_id']) ?: ('bulkId:' . $event['user_id']);
 		}
 
 		if ($event['event'] === 'UserAddedEvent') {

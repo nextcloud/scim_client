@@ -4,7 +4,6 @@ namespace OCA\ScimClient\Command\Server;
 
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Service\ScimServerService;
-use OCP\Security\ICrypto;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Update extends Command {
 	public function __construct(
 		private readonly ScimServerService $scimServerService,
-		private readonly ICrypto $crypto,
 	) {
 		parent::__construct();
 	}
@@ -66,7 +64,7 @@ class Update extends Command {
 
 		$apiKey = $input->getOption('api-key');
 		if ($apiKey) {
-			$server->setApiKey($this->crypto->encrypt($apiKey));
+			$server->setApiKey($apiKey);
 		}
 
 		$server = $this->scimServerService->updateScimServer($server);

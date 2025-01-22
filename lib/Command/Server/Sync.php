@@ -5,7 +5,6 @@ namespace OCA\ScimClient\Command\Server;
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimServerService;
-use OCP\Security\ICrypto;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,7 +14,6 @@ class Sync extends Command {
 	public function __construct(
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimServerService $scimServerService,
-		private readonly ICrypto $crypto,
 	) {
 		parent::__construct();
 	}
@@ -42,9 +40,14 @@ class Sync extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		try {
 			$name = $input->getArgument('name');
-			$server = $this->scimServerService->getScimServerByName($name)->jsonSerialize();
-			$server['api_key'] = $this->crypto->decrypt($server['api_key']);
-			$this->scimApiService->syncScimServer($server);
+			$server = $this->scimServerService->getScimServerByName($name);
+
+			if (!$server) {
+				$output->writeln(sprintf('SCIM server %s not found.', $name));
+				return Command::FAILURE;
+			}
+
+			$this->scimApiService->syncScimServer($server->jsonSerialize());
 		} catch (\Exception $e) {
 			$output->writeln('<error>Failed to sync server</error>');
 			$output->writeln($e->getMessage());

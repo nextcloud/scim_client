@@ -16,7 +16,6 @@ use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\IRequest;
-use OCP\Security\ICrypto;
 
 class ScimServerController extends ApiController {
 
@@ -26,7 +25,6 @@ class ScimServerController extends ApiController {
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
 		private readonly ScimSyncRequestService $scimSyncRequestService,
-		private readonly ICrypto $crypto,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -37,7 +35,7 @@ class ScimServerController extends ApiController {
 
 		foreach ($servers as &$server) {
 			// Mask API key with dummy secret if set
-			if (!empty($server['api_key'])) {
+			if ($server['api_key']) {
 				$server['api_key'] = Application::DUMMY_SECRET;
 			}
 		}
@@ -50,7 +48,7 @@ class ScimServerController extends ApiController {
 	public function registerScimServer(array $params): Response {
 		$server = $this->scimServerService->registerScimServer($params);
 
-		if (isset($server)) {
+		if ($server) {
 			$syncParams = ['server_id' => $server->getId()];
 			$this->scimSyncRequestService->addScimSyncRequest($syncParams);
 		}
@@ -65,13 +63,9 @@ class ScimServerController extends ApiController {
 	#[FrontpageRoute(verb: 'PUT', url: '/servers/{id}')]
 	public function updateScimServer(int $id, array $params): Response {
 		// Restore original API key if dummy secret is provided
-		$apiKey = $params['api_key'] ?? null;
-		if ($apiKey === Application::DUMMY_SECRET) {
+		if ($params['api_key'] === Application::DUMMY_SECRET) {
 			$server = $this->scimServerService->getScimServer($id);
 			$params['api_key'] = $server->getApiKey() ?? '';
-		} elseif (!empty($apiKey)) {
-			// New API key provided, encrypt it
-			$params['api_key'] = $this->crypto->encrypt($apiKey);
 		}
 
 		// Update the server config
@@ -87,7 +81,7 @@ class ScimServerController extends ApiController {
 		}
 
 		// Mask API key with dummy secret if set
-		if (!empty($updatedServer->getApiKey() ?? null)) {
+		if ($updatedServer->getApiKey()) {
 			$updatedServer->setApiKey(Application::DUMMY_SECRET);
 		}
 
@@ -104,7 +98,7 @@ class ScimServerController extends ApiController {
 		$server = $this->scimServerService->unregisterScimServer($server);
 
 		// Do not show API key in response
-		if (isset($server)) {
+		if ($server) {
 			$server = $server->jsonSerialize();
 			unset($server['api_key']);
 		}
@@ -117,12 +111,16 @@ class ScimServerController extends ApiController {
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/verify')]
 	public function verifyExistingScimServer(int $id): Response {
-		$server = $this->scimServerService->getScimServer($id)->jsonSerialize();
-		if (!empty($server['api_key'])) {
-			$server['api_key'] = $this->crypto->decrypt($server['api_key']);
+		$server = $this->scimServerService->getScimServer($id);
+
+		if (!$server) {
+			return new JSONResponse([
+				'error' => 'SCIM server not found',
+				'success' => false,
+			]);
 		}
 
-		return new JSONResponse($this->scimApiService->verifyScimServer($server));
+		return new JSONResponse($this->scimApiService->verifyScimServer($server->jsonSerialize()));
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/verify')]
@@ -136,7 +134,7 @@ class ScimServerController extends ApiController {
 		$request = $this->scimSyncRequestService->addScimSyncRequest($params);
 
 		return new JSONResponse([
-			'success' => isset($request),
+			'success' => (bool)$request,
 			'request' => $request,
 		]);
 	}

@@ -10,7 +10,6 @@ use OCA\ScimClient\Service\ScimServerService;
 use OCA\ScimClient\Service\ScimSyncRequestService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
-use OCP\Security\ICrypto;
 
 class Sync extends TimedJob {
 
@@ -19,7 +18,6 @@ class Sync extends TimedJob {
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimSyncRequestService $scimSyncRequestService,
 		private readonly ScimServerService $scimServerService,
-		private readonly ICrypto $crypto,
 	) {
 		parent::__construct($time);
 
@@ -33,10 +31,8 @@ class Sync extends TimedJob {
 		foreach ($requests as $request) {
 			$server = $this->scimServerService->getScimServer($request['server_id']);
 
-			if (isset($server)) {
-				$server = $server->jsonSerialize();
-				$server['api_key'] = $this->crypto->decrypt($server['api_key']);
-				$this->scimApiService->syncScimServer($server);
+			if ($server) {
+				$this->scimApiService->syncScimServer($server->jsonSerialize());
 			}
 
 			// TODO: keep the event instead if the sync operation is unsuccessful, write error to server log

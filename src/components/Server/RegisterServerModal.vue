@@ -126,7 +126,7 @@ export default {
 			return this.isEdit ? t('scim_client', 'Edit Server Details') : t('scim_client', 'Register New Server')
 		},
 		isServerNameUnique() {
-			return !this.servers.length || !this.servers.some(server => server.name === this.serverName && server.name !== this.server?.name)
+			return !this.servers.length || !this.servers.some(server => server.name === this.serverName.trim() && server.name !== this.server?.name)
 		},
 		serverNameFieldHelperText() {
 			return this.isServerNameUnique ? '' : t('scim_client', 'A server with this name already exists')
@@ -158,7 +158,7 @@ export default {
 			return this.serverUrl.length && this.isServerUrlValid && this.isServerUrlUnique && this.serverApiKey.length
 		},
 		isFormValidated() {
-			return this.serverName.length && this.isServerNameUnique && this.isServerDetailsValidated
+			return this.serverName.trim().length && this.isServerNameUnique && this.isServerDetailsValidated
 		},
 	},
 	watch: {
@@ -250,7 +250,7 @@ export default {
 		},
 		_buildServerParams() {
 			return {
-				name: this.serverName,
+				name: this.serverName.trim(),
 				url: this.serverUrl,
 				api_key: this.serverApiKey,
 			}

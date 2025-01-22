@@ -26,7 +26,7 @@ class AdminSettings implements ISettings {
 
 		foreach ($servers as &$server) {
 			// Mask API key with dummy secret if set
-			if (!empty($server['api_key'])) {
+			if ($server['api_key']) {
 				$server['api_key'] = Application::DUMMY_SECRET;
 			}
 		}

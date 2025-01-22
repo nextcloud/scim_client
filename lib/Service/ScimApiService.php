@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace OCA\ScimClient\Service;
 
 use OCA\ScimClient\AppInfo\Application;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\IL10N;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
-use OCP\Security\ICrypto;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -22,19 +17,12 @@ use Psr\Log\LoggerInterface;
  */
 class ScimApiService {
 
-	private IClient $client;
-
 	public function __construct(
-		IClientService $clientService,
-		private readonly LoggerInterface $logger,
-		private readonly IL10N $l10n,
-		private readonly IURLGenerator $urlGenerator,
-		private readonly ICrypto $crypto,
 		private readonly IGroupManager $groupManager,
 		private readonly IUserManager $userManager,
 		private readonly NetworkService $networkService,
+		private readonly LoggerInterface $logger,
 	) {
-		$this->client = $clientService->newClient();
 	}
 
 	/**
@@ -48,19 +36,83 @@ class ScimApiService {
 
 	/**
 	 * @param array $server
+	 * @param array $operations
+	 * @return void
+	 * @throws PreConditionNotMetException
+	 */
+	public function sendBulkRequest(array $server, array $operations): void {
+		// TODO: split bulk request according to $maxBulkOperations and adjust bulk/server IDs accordingly
+		// in the meantime, it is expected that $maxBulkOperations should be large enough to handle any number of operations
+		$params = [
+			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
+			'Operations' => $operations,
+		];
+		$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
+		$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
+
+		// TODO: parse response and handle any errors from each operation
+	}
+
+	/**
+	 * @param array $server
+	 * @param string $userId
+	 * @return string
+	 * @throws PreConditionNotMetException
+	 */
+	public function getScimServerUID(array $server, string $userId): string {
+		$params = [
+			'filter' => sprintf('externalId eq "%s"', $userId),
+		];
+		$results = $this->networkService->request($server, '/Users', $params, 'GET');
+		$this->logger->debug('SCIM /Users GET', ['responseBody' => $results]);
+
+		if (!$results || $results['error']) {
+			return '';
+		}
+
+		$user = array_shift($results['Resources']);
+		return $user['id'] ?? '';
+	}
+
+	/**
+	 * @param array $server
+	 * @param string $groupId
+	 * @return string
+	 * @throws PreConditionNotMetException
+	 */
+	public function getScimServerGID(array $server, string $groupId): string {
+		$params = [
+			'filter' => sprintf('externalId eq "%s"', $groupId),
+		];
+		$results = $this->networkService->request($server, '/Groups', $params, 'GET');
+		$this->logger->debug('SCIM /Groups GET', ['responseBody' => $results]);
+
+		if (!$results || $results['error']) {
+			return '';
+		}
+
+		$group = array_shift($results['Resources']);
+		return $group['id'] ?? '';
+	}
+
+	/**
+	 * @param array $server
 	 * @return array
 	 * @throws PreConditionNotMetException
 	 */
 	public function verifyScimServer(array $server): array {
 		$config = $this->getScimServerConfig($server);
 
-		if (isset($config['error'])) {
-			$reponse['success'] = false;
-			return $config;
+		if ($config['error']) {
+			return [
+				'error' => 'Unable to fetch SCIM server config',
+				'response' => $config,
+				'success' => false,
+			];
 		}
 
 		$hasScimSchema = $config['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $config['bulk']['maxOperations'] > 0;
+		$isBulkOperationsSupported = $config['bulk']['supported'] && $config['bulk']['maxOperations'];
 
 		if (!$hasScimSchema) {
 			return [
@@ -86,12 +138,12 @@ class ScimApiService {
 	public function syncScimServer(array $server): void {
 		$config = $this->getScimServerConfig($server);
 
-		if (isset($config['error'])) {
+		if ($config['error']) {
 			return;
 		}
 
 		$maxBulkOperations = $config['bulk']['maxOperations'];
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations > 0;
+		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
 		if (!$isBulkOperationsSupported) {
 			// TODO: add support for servers without bulk operations
@@ -105,18 +157,11 @@ class ScimApiService {
 			// If user already exists in server, replace existing user, otherwise create new user
 			$userId = $user->getUID();
 			$email = $user->getEmailAddress();
-
-			$userResults = $this->networkService->request($server, '/Users', ['filter' => sprintf('externalId eq "%s"', $userId)], 'GET');
-			if (!isset($userResults) || isset($userResults['error'])) {
-				return [];
-			}
-
-			$userExists = $userResults['totalResults'] > 0;
-			$userPath = $userExists ? '/' . $userResults['Resources'][0]['id'] : '';
+			$serverId = $this->getScimServerUID($server, $userId);
 
 			return [
-				'method' => $userExists ? 'PUT' : 'POST',
-				'path' => '/Users' . $userPath,
+				'method' => $serverId ? 'PUT' : 'POST',
+				'path' => '/Users' . ($serverId ? ('/' . $serverId) : ''),
 				'bulkId' => $userId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
@@ -126,30 +171,27 @@ class ScimApiService {
 					'name' => [
 						'formatted' => $user->getDisplayName(),
 					],
-					'emails' => is_string($email) && mb_strlen($email) ? [['value' => $email]] : [],
+					'emails' => $email ? [['value' => $email]] : [],
 				],
 			];
 		}, $users);
 
-		$groupResults = $this->networkService->request($server, '/Groups', ['attributes' => 'displayName'], 'GET');
-		$serverGroups = $groupResults['Resources'];
-
-		$groupOperations = array_map(function (IGroup $group) use ($serverGroups): array {
+		$groupOperations = array_map(function (IGroup $group) use ($server): array {
 			$operations = [];
 
-			$displayName = $group->getDisplayName();
-			$serverGroupResults = array_filter($serverGroups, fn (array $g): bool => $displayName === $g['displayName']);
-			$serverGroup = array_shift($serverGroupResults);
+			$groupId = $group->getGID();
+			$serverId = $this->getScimServerGID($server, $groupId);
 
-			if (is_null($serverGroup)) {
+			if (!$serverId) {
 				// Group does not exist in server yet, create it first
 				$operations[] = [
 					'method' => 'POST',
 					'path' => '/Groups',
-					'bulkId' => $displayName,
+					'bulkId' => $groupId,
 					'data' => [
 						'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
-						'displayName' => $displayName,
+						'displayName' => $group->getDisplayName(),
+						'externalId' => $groupId,
 					],
 				];
 			}
@@ -160,11 +202,11 @@ class ScimApiService {
 				'value' => [['value' => 'bulkId:' . $user->getUID()]],
 			], $group->getUsers());
 
-			if (count($addGroupUsers) > 0) {
+			if ($addGroupUsers) {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . (isset($serverGroup) ? $serverGroup['id'] : 'bulkId:' . $displayName),
+					'path' => '/Groups/' . ($serverId ?: ('bulkId:' . $groupId)),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,
@@ -175,12 +217,7 @@ class ScimApiService {
 			return $operations;
 		}, $groups);
 
-		// Try sending the bulk operation regardless of $maxBulkOperations value
-		// All operations should be done in a single bulk request so that the bulkIds are correctly referenced
-		$params = [
-			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-			'Operations' => array_values(array_merge($userOperations, ...$groupOperations)),
-		];
-		$this->networkService->request($server, '/Bulk', $params, 'POST');
+		$bulkOperations = array_values(array_merge($userOperations, ...$groupOperations));
+		$this->sendBulkRequest($server, $bulkOperations);
 	}
 }

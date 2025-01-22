@@ -22,10 +22,12 @@ class ScimServerService {
 	}
 
 	public function registerScimServer(array $params): ?ScimServer {
-		if (!mb_strlen($params['name'])) {
+		$name = trim($params['name']);
+		if (!$name) {
 			$this->logger->error('Failed to register SCIM server. Name cannot be empty.');
 			return null;
 		}
+		$params['name'] = $name;
 
 		if (!str_starts_with($params['url'], 'http://') && !str_starts_with($params['url'], 'https://')) {
 			$this->logger->error('Failed to register SCIM server. URL must start with `http://` or `https://`.');
@@ -34,7 +36,7 @@ class ScimServerService {
 
 		$params['url'] = rtrim($params['url'], '/');
 
-		if (!empty($params['api_key'])) {
+		if ($params['api_key']) {
 			$params['api_key'] = $this->crypto->encrypt($params['api_key']);
 		}
 
@@ -60,8 +62,7 @@ class ScimServerService {
 			return array_map(function (ScimServer $s): array {
 				$server = $s->jsonSerialize();
 
-				// Decrypt API key if set
-				if (!empty($server['api_key'])) {
+				if ($server['api_key']) {
 					$server['api_key'] = $this->crypto->decrypt($server['api_key']);
 				}
 
@@ -75,7 +76,14 @@ class ScimServerService {
 
 	public function getScimServer(int $id): ?ScimServer {
 		try {
-			return $this->mapper->findById($id);
+			$server = $this->mapper->findById($id);
+
+			$apiKey = $server->getApiKey();
+			if ($apiKey) {
+				$server->setApiKey($this->crypto->decrypt($apiKey));
+			}
+
+			return $server;
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
 			$this->logger->debug('Failed to get SCIM server. Error: ' . $e->getMessage(), ['exception' => $e]);
 			return null;
@@ -84,7 +92,14 @@ class ScimServerService {
 
 	public function getScimServerByName(string $name): ?ScimServer {
 		try {
-			return $this->mapper->findByName($name);
+			$server = $this->mapper->findByName($name);
+
+			$apiKey = $server->getApiKey();
+			if ($apiKey) {
+				$server->setApiKey($this->crypto->decrypt($apiKey));
+			}
+
+			return $server;
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
 			$this->logger->debug('Failed to get SCIM server by name. Error: ' . $e->getMessage(), ['exception' => $e]);
 			return null;
@@ -93,6 +108,11 @@ class ScimServerService {
 
 	public function updateScimServer(ScimServer $server): ?ScimServer {
 		try {
+			$apiKey = $server->getApiKey();
+			if ($apiKey) {
+				$server->setApiKey($this->crypto->encrypt($apiKey));
+			}
+
 			return $this->mapper->update($server);
 		} catch (Exception $e) {
 			$this->logger->error('Failed to update ScimServer. Error: ' . $e->getMessage(), ['exception' => $e]);

@@ -61,7 +61,7 @@ class NetworkService {
 				],
 			];
 
-			if (count($params) > 0) {
+			if ($params) {
 				if ($method === 'GET') {
 					$url .= '?' . http_build_query($params);
 				} else {
@@ -78,10 +78,10 @@ class NetworkService {
 			return $jsonResponse ? json_decode($body, true) : $body;
 		} catch (ServerException|ClientException $e) {
 			$body = $e->getResponse()->getBody();
-			$this->logger->warning('SCIM API error : ' . $body, ['app' => Application::APP_ID]);
+			$this->logger->warning('SCIM API error', ['responseBody' => (string)$body, 'exception' => $e]);
 			return ['error' => $e->getMessage()];
 		} catch (Exception|Throwable $e) {
-			$this->logger->warning('SCIM API error', ['exception' => $e, 'app' => Application::APP_ID]);
+			$this->logger->warning('SCIM API error', ['exception' => $e]);
 			return ['error' => $e->getMessage()];
 		}
 	}
