@@ -60,7 +60,6 @@ class ScimServerService {
 			return array_map(function (ScimServer $s): array {
 				$server = $s->jsonSerialize();
 
-				// Decrypt API key if set
 				if (!empty($server['api_key'])) {
 					$server['api_key'] = $this->crypto->decrypt($server['api_key']);
 				}
@@ -75,7 +74,14 @@ class ScimServerService {
 
 	public function getScimServer(int $id): ?ScimServer {
 		try {
-			return $this->mapper->findById($id);
+			$server = $this->mapper->findById($id);
+
+			$apiKey = $server->getApiKey();
+			if ($apiKey) {
+				$server->setApiKey($this->crypto->decrypt($apiKey));
+			}
+
+			return $server;
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
 			$this->logger->debug('Failed to get SCIM server. Error: ' . $e->getMessage(), ['exception' => $e]);
 			return null;
@@ -84,7 +90,14 @@ class ScimServerService {
 
 	public function getScimServerByName(string $name): ?ScimServer {
 		try {
-			return $this->mapper->findByName($name);
+			$server = $this->mapper->findByName($name);
+
+			$apiKey = $server->getApiKey();
+			if ($apiKey) {
+				$server->setApiKey($this->crypto->decrypt($apiKey));
+			}
+
+			return $server;
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
 			$this->logger->debug('Failed to get SCIM server by name. Error: ' . $e->getMessage(), ['exception' => $e]);
 			return null;
@@ -93,6 +106,11 @@ class ScimServerService {
 
 	public function updateScimServer(ScimServer $server): ?ScimServer {
 		try {
+			$apiKey = $server->getApiKey();
+			if ($apiKey) {
+				$server->setApiKey($this->crypto->encrypt($apiKey));
+			}
+
 			return $this->mapper->update($server);
 		} catch (Exception $e) {
 			$this->logger->error('Failed to update ScimServer. Error: ' . $e->getMessage(), ['exception' => $e]);

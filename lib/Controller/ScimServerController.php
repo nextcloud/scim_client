@@ -16,7 +16,6 @@ use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\IRequest;
-use OCP\Security\ICrypto;
 
 class ScimServerController extends ApiController {
 
@@ -26,7 +25,6 @@ class ScimServerController extends ApiController {
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
 		private readonly ScimSyncRequestService $scimSyncRequestService,
-		private readonly ICrypto $crypto,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -69,9 +67,6 @@ class ScimServerController extends ApiController {
 		if ($apiKey === Application::DUMMY_SECRET) {
 			$server = $this->scimServerService->getScimServer($id);
 			$params['api_key'] = $server->getApiKey() ?? '';
-		} elseif (!empty($apiKey)) {
-			// New API key provided, encrypt it
-			$params['api_key'] = $this->crypto->encrypt($apiKey);
 		}
 
 		// Update the server config
@@ -117,12 +112,16 @@ class ScimServerController extends ApiController {
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/verify')]
 	public function verifyExistingScimServer(int $id): Response {
-		$server = $this->scimServerService->getScimServer($id)->jsonSerialize();
-		if (!empty($server['api_key'])) {
-			$server['api_key'] = $this->crypto->decrypt($server['api_key']);
+		$server = $this->scimServerService->getScimServer($id);
+
+		if (!$server) {
+			return new JSONResponse([
+				'error' => 'SCIM server not found',
+				'success' => false,
+			]);
 		}
 
-		return new JSONResponse($this->scimApiService->verifyScimServer($server));
+		return new JSONResponse($this->scimApiService->verifyScimServer($server->jsonSerialize()));
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/verify')]
