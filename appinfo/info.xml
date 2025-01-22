@@ -13,6 +13,7 @@ Simply add your SCIM servers in the admin settings, and the app will automatical
 	<namespace>ScimClient</namespace>
 	<category>integration</category>
 	<category>social</category>
+	<website>https://github.com/nextcloud/scim_client</website>
 	<bugs>https://github.com/nextcloud/scim_client/issues</bugs>
 	<dependencies>
 		<nextcloud min-version="30" max-version="31"/>
