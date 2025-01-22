@@ -22,7 +22,7 @@ class ScimServerService {
 	}
 
 	public function registerScimServer(array $params): ?ScimServer {
-		if (!mb_strlen($params['name'])) {
+		if (!$params['name']) {
 			$this->logger->error('Failed to register SCIM server. Name cannot be empty.');
 			return null;
 		}
@@ -34,7 +34,7 @@ class ScimServerService {
 
 		$params['url'] = rtrim($params['url'], '/');
 
-		if (!empty($params['api_key'])) {
+		if ($params['api_key']) {
 			$params['api_key'] = $this->crypto->encrypt($params['api_key']);
 		}
 
@@ -60,7 +60,7 @@ class ScimServerService {
 			return array_map(function (ScimServer $s): array {
 				$server = $s->jsonSerialize();
 
-				if (!empty($server['api_key'])) {
+				if ($server['api_key']) {
 					$server['api_key'] = $this->crypto->decrypt($server['api_key']);
 				}
 

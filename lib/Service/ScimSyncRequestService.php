@@ -27,7 +27,7 @@ class ScimSyncRequestService {
 				$this->mapper->delete($duplicateRequest);
 			}
 
-			return isset($request) ? $request : $this->mapper->insert(new ScimSyncRequest($params));
+			return $request ?: $this->mapper->insert(new ScimSyncRequest($params));
 		} catch (Exception $e) {
 			$this->logger->error('Failed to create SCIM sync request. Error: ' . $e->getMessage(), ['exception' => $e]);
 			return null;

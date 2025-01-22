@@ -61,7 +61,7 @@ class NetworkService {
 				],
 			];
 
-			if (count($params) > 0) {
+			if ($params) {
 				if ($method === 'GET') {
 					$url .= '?' . http_build_query($params);
 				} else {

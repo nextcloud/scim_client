@@ -35,7 +35,7 @@ class ScimServerController extends ApiController {
 
 		foreach ($servers as &$server) {
 			// Mask API key with dummy secret if set
-			if (!empty($server['api_key'])) {
+			if ($server['api_key']) {
 				$server['api_key'] = Application::DUMMY_SECRET;
 			}
 		}
@@ -48,7 +48,7 @@ class ScimServerController extends ApiController {
 	public function registerScimServer(array $params): Response {
 		$server = $this->scimServerService->registerScimServer($params);
 
-		if (isset($server)) {
+		if ($server) {
 			$syncParams = ['server_id' => $server->getId()];
 			$this->scimSyncRequestService->addScimSyncRequest($syncParams);
 		}
@@ -63,8 +63,7 @@ class ScimServerController extends ApiController {
 	#[FrontpageRoute(verb: 'PUT', url: '/servers/{id}')]
 	public function updateScimServer(int $id, array $params): Response {
 		// Restore original API key if dummy secret is provided
-		$apiKey = $params['api_key'] ?? null;
-		if ($apiKey === Application::DUMMY_SECRET) {
+		if ($params['api_key'] === Application::DUMMY_SECRET) {
 			$server = $this->scimServerService->getScimServer($id);
 			$params['api_key'] = $server->getApiKey() ?? '';
 		}
@@ -82,7 +81,7 @@ class ScimServerController extends ApiController {
 		}
 
 		// Mask API key with dummy secret if set
-		if (!empty($updatedServer->getApiKey() ?? null)) {
+		if ($updatedServer->getApiKey()) {
 			$updatedServer->setApiKey(Application::DUMMY_SECRET);
 		}
 
@@ -99,7 +98,7 @@ class ScimServerController extends ApiController {
 		$server = $this->scimServerService->unregisterScimServer($server);
 
 		// Do not show API key in response
-		if (isset($server)) {
+		if ($server) {
 			$server = $server->jsonSerialize();
 			unset($server['api_key']);
 		}
@@ -135,7 +134,7 @@ class ScimServerController extends ApiController {
 		$request = $this->scimSyncRequestService->addScimSyncRequest($params);
 
 		return new JSONResponse([
-			'success' => isset($request),
+			'success' => (bool)$request,
 			'request' => $request,
 		]);
 	}

@@ -37,7 +37,7 @@ class Update extends TimedJob {
 	protected function run($argument): void {
 		$events = $this->scimEventService->getScimEvents();
 
-		if (count($events) === 0) {
+		if (!$events) {
 			return;
 		}
 
@@ -47,7 +47,7 @@ class Update extends TimedJob {
 			$config = $this->scimApiService->getScimServerConfig($server);
 
 			$maxBulkOperations = $config['bulk']['maxOperations'];
-			$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations > 0;
+			$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
 			if (!$isBulkOperationsSupported) {
 				// TODO: add support for servers without bulk operations

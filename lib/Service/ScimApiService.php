@@ -66,7 +66,7 @@ class ScimApiService {
 		$results = $this->networkService->request($server, '/Users', $params, 'GET');
 		$this->logger->debug('SCIM /Users GET', ['responseBody' => $results]);
 
-		if (!isset($results) || isset($results['error'])) {
+		if (!$results || $results['error']) {
 			return '';
 		}
 
@@ -87,7 +87,7 @@ class ScimApiService {
 		$results = $this->networkService->request($server, '/Groups', $params, 'GET');
 		$this->logger->debug('SCIM /Groups GET', ['responseBody' => $results]);
 
-		if (!isset($results) || isset($results['error'])) {
+		if (!$results || $results['error']) {
 			return '';
 		}
 
@@ -103,7 +103,7 @@ class ScimApiService {
 	public function verifyScimServer(array $server): array {
 		$config = $this->getScimServerConfig($server);
 
-		if (isset($config['error'])) {
+		if ($config['error']) {
 			return [
 				'error' => 'Unable to fetch SCIM server config',
 				'response' => $config,
@@ -112,7 +112,7 @@ class ScimApiService {
 		}
 
 		$hasScimSchema = $config['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $config['bulk']['maxOperations'] > 0;
+		$isBulkOperationsSupported = $config['bulk']['supported'] && $config['bulk']['maxOperations'];
 
 		if (!$hasScimSchema) {
 			return [
@@ -138,12 +138,12 @@ class ScimApiService {
 	public function syncScimServer(array $server): void {
 		$config = $this->getScimServerConfig($server);
 
-		if (isset($config['error'])) {
+		if ($config['error']) {
 			return;
 		}
 
 		$maxBulkOperations = $config['bulk']['maxOperations'];
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations > 0;
+		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
 		if (!$isBulkOperationsSupported) {
 			// TODO: add support for servers without bulk operations
@@ -202,7 +202,7 @@ class ScimApiService {
 				'value' => [['value' => 'bulkId:' . $user->getUID()]],
 			], $group->getUsers());
 
-			if (count($addGroupUsers) > 0) {
+			if ($addGroupUsers) {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',

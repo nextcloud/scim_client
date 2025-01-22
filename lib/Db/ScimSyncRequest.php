@@ -26,10 +26,10 @@ class ScimSyncRequest extends Entity implements JsonSerializable {
 	public function __construct(array $params = []) {
 		$this->addType('serverId', Types::BIGINT);
 
-		if (isset($params['id'])) {
+		if ($params['id']) {
 			$this->setId($params['id']);
 		}
-		if (isset($params['server_id'])) {
+		if ($params['server_id']) {
 			$this->setServerId($params['server_id']);
 		}
 	}
