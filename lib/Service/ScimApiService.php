@@ -36,6 +36,25 @@ class ScimApiService {
 
 	/**
 	 * @param array $server
+	 * @param array $operations
+	 * @return void
+	 * @throws PreConditionNotMetException
+	 */
+	public function sendBulkRequest(array $server, array $operations): void {
+		// TODO: split bulk request according to $maxBulkOperations and adjust bulk/server IDs accordingly
+		// in the meantime, it is expected that $maxBulkOperations should be large enough to handle any number of operations
+		$params = [
+			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
+			'Operations' => $operations,
+		];
+		$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
+		$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
+
+		// TODO: parse response and handle any errors from each operation
+	}
+
+	/**
+	 * @param array $server
 	 * @param string $userId
 	 * @return string
 	 * @throws PreConditionNotMetException
@@ -198,14 +217,7 @@ class ScimApiService {
 			return $operations;
 		}, $groups);
 
-		// TODO: split bulk request according to $maxBulkOperations and adjust bulk/server IDs accordingly
-		$params = [
-			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-			'Operations' => array_values(array_merge($userOperations, ...$groupOperations)),
-		];
-		$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
-		$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
-
-		// TODO: parse response and handle any errors from each operation
+		$bulkOperations = array_values(array_merge($userOperations, ...$groupOperations));
+		$this->sendBulkRequest($server, $bulkOperations);
 	}
 }

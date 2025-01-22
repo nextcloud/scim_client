@@ -6,7 +6,6 @@ namespace OCA\ScimClient\Cron;
 
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Db\ScimEvent;
-use OCA\ScimClient\Service\NetworkService;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
@@ -27,7 +26,6 @@ class Update extends TimedJob {
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
-		private readonly NetworkService $networkService,
 		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($time);
@@ -56,12 +54,8 @@ class Update extends TimedJob {
 				continue;
 			}
 
-			$operations = array_values(array_filter(array_map(fn (array $e): array => self::_generateEventParams($e, $server), $events)));
-			$params = [
-				'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-				'Operations' => $operations,
-			];
-			$this->networkService->request($server, '/Bulk', $params, 'POST');
+			$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
+			$this->scimApiService->sendBulkRequest($server, array_values(array_filter($operations)));
 		}
 
 		// Cleanup processed update events
