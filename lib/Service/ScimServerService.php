@@ -22,10 +22,12 @@ class ScimServerService {
 	}
 
 	public function registerScimServer(array $params): ?ScimServer {
-		if (!$params['name']) {
+		$name = trim($params['name']);
+		if (!$name) {
 			$this->logger->error('Failed to register SCIM server. Name cannot be empty.');
 			return null;
 		}
+		$params['name'] = $name;
 
 		if (!str_starts_with($params['url'], 'http://') && !str_starts_with($params['url'], 'https://')) {
 			$this->logger->error('Failed to register SCIM server. URL must start with `http://` or `https://`.');
