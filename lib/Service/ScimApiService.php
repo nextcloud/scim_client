@@ -157,11 +157,11 @@ class ScimApiService {
 			// If user already exists in server, replace existing user, otherwise create new user
 			$userId = $user->getUID();
 			$email = $user->getEmailAddress();
-			$serverId = $this->getScimServerUID($server, $userId);
+			$serverUserId = $this->getScimServerUID($server, $userId);
 
 			return [
-				'method' => $serverId ? 'PUT' : 'POST',
-				'path' => '/Users' . ($serverId ? ('/' . $serverId) : ''),
+				'method' => $serverUserId ? 'PUT' : 'POST',
+				'path' => '/Users' . ($serverUserId ? ('/' . $serverUserId) : ''),
 				'bulkId' => $userId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
@@ -180,21 +180,19 @@ class ScimApiService {
 			$operations = [];
 
 			$groupId = $group->getGID();
-			$serverId = $this->getScimServerGID($server, $groupId);
+			$serverGroupId = $this->getScimServerGID($server, $groupId);
 
-			if (!$serverId) {
-				// Group does not exist in server yet, create it first
-				$operations[] = [
-					'method' => 'POST',
-					'path' => '/Groups',
-					'bulkId' => $groupId,
-					'data' => [
-						'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
-						'displayName' => $group->getDisplayName(),
-						'externalId' => $groupId,
-					],
-				];
-			}
+			// if the group does not exist in the server yet, create it, otherwise update it
+			$operations[] = [
+				'method' => $serverGroupId ? 'PUT' : 'POST',
+				'path' => '/Groups' . ($serverGroupId ? ('/' . $serverGroupId) : ''),
+				'bulkId' => $groupId,
+				'data' => [
+					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
+					'displayName' => $group->getDisplayName(),
+					'externalId' => $groupId,
+				],
+			];
 
 			$addGroupUsers = array_map(static fn (IUser $user): array => [
 				'op' => 'add',
@@ -206,7 +204,7 @@ class ScimApiService {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . ($serverId ?: ('bulkId:' . $groupId)),
+					'path' => '/Groups/' . ($serverGroupId ?: ('bulkId:' . $groupId)),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,
