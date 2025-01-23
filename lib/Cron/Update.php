@@ -69,13 +69,13 @@ class Update extends TimedJob {
 		if ($event['group_id']) {
 			// Get the corresponding group ID on the SCIM server,
 			// or use a bulk ID if group hasn't been created yet
-			$groupId = $this->scimApiService->getScimServerGID($server, $event['group_id']) ?: ('bulkId:' . $event['group_id']);
+			$groupId = $this->scimApiService->getScimServerGID($server, $event['group_id']) ?: ('bulkId:Group:' . $event['group_id']);
 		}
 
 		if ($event['user_id']) {
 			// Get the corresponding user ID on the SCIM server,
 			// or use a bulk ID if user hasn't been created yet
-			$userId = $this->scimApiService->getScimServerUID($server, $event['user_id']) ?: ('bulkId:' . $event['user_id']);
+			$userId = $this->scimApiService->getScimServerUID($server, $event['user_id']) ?: ('bulkId:User:' . $event['user_id']);
 		}
 
 		if ($event['event'] === 'UserAddedEvent') {
@@ -120,7 +120,7 @@ class Update extends TimedJob {
 			return [
 				'method' => 'POST',
 				'path' => '/Users',
-				'bulkId' => $event['user_id'],
+				'bulkId' => 'User:' . $event['user_id'],
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
 					'active' => true,
@@ -183,7 +183,7 @@ class Update extends TimedJob {
 			return [
 				'method' => 'POST',
 				'path' => '/Groups',
-				'bulkId' => $event['group_id'],
+				'bulkId' => 'Group:' . $event['group_id'],
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
 					'externalId' => $event['group_id'],

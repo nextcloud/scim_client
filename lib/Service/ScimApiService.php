@@ -162,7 +162,7 @@ class ScimApiService {
 			return [
 				'method' => $serverUserId ? 'PUT' : 'POST',
 				'path' => '/Users' . ($serverUserId ? ('/' . $serverUserId) : ''),
-				'bulkId' => $userId,
+				'bulkId' => 'User:' . $userId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
 					'active' => $user->isEnabled(),
@@ -186,7 +186,7 @@ class ScimApiService {
 			$operations[] = [
 				'method' => $serverGroupId ? 'PUT' : 'POST',
 				'path' => '/Groups' . ($serverGroupId ? ('/' . $serverGroupId) : ''),
-				'bulkId' => $groupId,
+				'bulkId' => 'Group:' . $groupId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
 					'displayName' => $group->getDisplayName(),
@@ -197,14 +197,14 @@ class ScimApiService {
 			$addGroupUsers = array_map(static fn (IUser $user): array => [
 				'op' => 'add',
 				'path' => 'members',
-				'value' => [['value' => 'bulkId:' . $user->getUID()]],
+				'value' => [['value' => 'bulkId:User:' . $user->getUID()]],
 			], $group->getUsers());
 
 			if ($addGroupUsers) {
 				// Copy group members to server
 				$operations[] = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . ($serverGroupId ?: ('bulkId:' . $groupId)),
+					'path' => '/Groups/' . ($serverGroupId ?: ('bulkId:Group:' . $groupId)),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,
