@@ -145,21 +145,18 @@ class ScimApiService {
 		$maxBulkOperations = $config['bulk']['maxOperations'];
 		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
-		if (!$isBulkOperationsSupported) {
-			// TODO: add support for servers without bulk operations
-			return;
-		}
-
 		$users = $this->userManager->search('');
 		$groups = $this->groupManager->search('');
+		$serverUserIds = [];
 
-		$userOperations = array_map(function (IUser $user) use ($server): array {
+		$userOperations = array_map(function (IUser $user) use ($server, &$serverUserIds, $isBulkOperationsSupported): array {
 			// If user already exists in server, replace existing user, otherwise create new user
 			$userId = $user->getUID();
 			$email = $user->getEmailAddress();
 			$serverUserId = $this->getScimServerUID($server, $userId);
+			$serverUserIds[$userId] = $serverUserId;
 
-			return [
+			$syncUserOperation = [
 				'method' => $serverUserId ? 'PUT' : 'POST',
 				'path' => '/Users' . ($serverUserId ? ('/' . $serverUserId) : ''),
 				'bulkId' => 'User:' . $userId,
@@ -174,16 +171,21 @@ class ScimApiService {
 					'emails' => $email ? [['value' => $email]] : [],
 				],
 			];
+
+			if (!$isBulkOperationsSupported) {
+				$response = $this->networkService->request($server, $syncUserOperation['path'], $syncUserOperation['data'], $syncUserOperation['method']);
+				$this->logger->debug(sprintf('SCIM %s %s', $syncUserOperation['path'], $syncUserOperation['method']), ['responseBody' => $response]);
+			}
+
+			return $syncUserOperation;
 		}, $users);
 
-		$groupOperations = array_map(function (IGroup $group) use ($server): array {
-			$operations = [];
-
+		$groupOperations = array_map(function (IGroup $group) use ($server, $serverUserIds, $isBulkOperationsSupported): array {
 			$groupId = $group->getGID();
 			$serverGroupId = $this->getScimServerGID($server, $groupId);
 
 			// if the group does not exist in the server yet, create it, otherwise update it
-			$operations[] = [
+			$syncGroupOperation = [
 				'method' => $serverGroupId ? 'PUT' : 'POST',
 				'path' => '/Groups' . ($serverGroupId ? ('/' . $serverGroupId) : ''),
 				'bulkId' => 'Group:' . $groupId,
@@ -194,15 +196,27 @@ class ScimApiService {
 				],
 			];
 
-			$addGroupUsers = array_map(static fn (IUser $user): array => [
-				'op' => 'add',
-				'path' => 'members',
-				'value' => [['value' => 'bulkId:User:' . $user->getUID()]],
-			], $group->getUsers());
+			if (!$isBulkOperationsSupported) {
+				$response = $this->networkService->request($server, $syncGroupOperation['path'], $syncGroupOperation['data'], $syncGroupOperation['method']);
+				$this->logger->debug(sprintf('SCIM %s %s', $syncGroupOperation['path'], $syncGroupOperation['method']), ['responseBody' => $response]);
+				$serverGroupId = $response['id'];
+			}
+
+			$operations = [$syncGroupOperation];
+
+			$addGroupUsers = array_map(function (IUser $user) use ($serverUserIds): array {
+				$userId = $user->getUID();
+
+				return [
+					'op' => 'add',
+					'path' => 'members',
+					'value' => [['value' => $serverUserIds[$userId] ?: ('bulkId:User:' . $userId)]],
+				];
+			}, $group->getUsers());
 
 			if ($addGroupUsers) {
 				// Copy group members to server
-				$operations[] = [
+				$syncMembersOperation = [
 					'method' => 'PATCH',
 					'path' => '/Groups/' . ($serverGroupId ?: ('bulkId:Group:' . $groupId)),
 					'data' => [
@@ -210,12 +224,21 @@ class ScimApiService {
 						'Operations' => $addGroupUsers,
 					],
 				];
+
+				if (!$isBulkOperationsSupported) {
+					$response = $this->networkService->request($server, $syncMembersOperation['path'], $syncMembersOperation['data'], $syncMembersOperation['method']);
+					$this->logger->debug(sprintf('SCIM %s %s', $syncMembersOperation['path'], $syncMembersOperation['method']), ['responseBody' => $response]);
+				}
+
+				$operations[] = $syncMembersOperation;
 			}
 
 			return $operations;
 		}, $groups);
 
-		$bulkOperations = array_values(array_merge($userOperations, ...$groupOperations));
-		$this->sendBulkRequest($server, $bulkOperations);
+		if ($isBulkOperationsSupported) {
+			$bulkOperations = array_values(array_merge($userOperations, ...$groupOperations));
+			$this->sendBulkRequest($server, $bulkOperations);
+		}
 	}
 }
