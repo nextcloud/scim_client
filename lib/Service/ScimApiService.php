@@ -283,26 +283,37 @@ class ScimApiService {
 	 * @param array $events
 	 * @return void
 	 */
-	public function updateScimServer(array $server, array $events): void {
+	public function updateScimServer(array $server, array &$events): void {
 		$config = $this->getScimServerConfig($server);
 
 		$maxBulkOperations = $config['bulk']['maxOperations'];
 		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
-		if ($isBulkOperationsSupported) {
-			$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
-			$operations = array_values(array_filter($operations));
-			$this->sendBulkRequest($server, $operations, $maxBulkOperations);
+		if (!$isBulkOperationsSupported) {
+			foreach ($events as $event) {
+				$operation = $this->_generateEventParams($event, $server);
+
+				if ($operation) {
+					$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
+					$this->logger->debug(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
+				}
+			}
+
 			return;
 		}
 
-		foreach ($events as $event) {
-			$operation = $this->_generateEventParams($event, $server);
+		while ($events) {
+			$operations = [];
 
-			if ($operation) {
-				$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
-				$this->logger->debug(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
+			while ($events && (count($operations) < $maxBulkOperations)) {
+				$nextEvent = array_shift($events);
+				$operation = $this->_generateEventParams($nextEvent, $server);
+				if ($operation) {
+					$operations[] = $operation;
+				}
 			}
+
+			$this->sendBulkRequest($server, $operations, $maxBulkOperations);
 		}
 	}
 
