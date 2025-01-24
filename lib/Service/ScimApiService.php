@@ -130,7 +130,7 @@ class ScimApiService {
 		}
 
 		$hasScimSchema = $config['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $config['bulk']['maxOperations'];
+		$isBulkOperationsSupported = $config['bulk']['supported'] && ($config['bulk']['maxOperations'] > 1);
 
 		if (!$hasScimSchema) {
 			return [
@@ -161,7 +161,7 @@ class ScimApiService {
 		}
 
 		$maxBulkOperations = $config['bulk']['maxOperations'];
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
+		$isBulkOperationsSupported = $config['bulk']['supported'] && ($maxBulkOperations > 1);
 
 		$users = $this->userManager->search('');
 		$groups = $this->groupManager->search('');
@@ -287,7 +287,7 @@ class ScimApiService {
 		$config = $this->getScimServerConfig($server);
 
 		$maxBulkOperations = $config['bulk']['maxOperations'];
-		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
+		$isBulkOperationsSupported = $config['bulk']['supported'] && ($maxBulkOperations > 1);
 
 		if (!$isBulkOperationsSupported) {
 			foreach ($events as $event) {
