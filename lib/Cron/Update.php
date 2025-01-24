@@ -6,6 +6,7 @@ namespace OCA\ScimClient\Cron;
 
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Db\ScimEvent;
+use OCA\ScimClient\Service\NetworkService;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimEventService;
 use OCA\ScimClient\Service\ScimServerService;
@@ -23,6 +24,7 @@ class Update extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $time,
+		private readonly NetworkService $networkService,
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimEventService $scimEventService,
 		private readonly ScimServerService $scimServerService,
@@ -49,13 +51,20 @@ class Update extends TimedJob {
 			$maxBulkOperations = $config['bulk']['maxOperations'];
 			$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
 
-			if (!$isBulkOperationsSupported) {
-				// TODO: add support for servers without bulk operations
+			if ($isBulkOperationsSupported) {
+				$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
+				$this->scimApiService->sendBulkRequest($server, array_values(array_filter($operations)));
 				continue;
 			}
 
-			$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
-			$this->scimApiService->sendBulkRequest($server, array_values(array_filter($operations)));
+			foreach ($events as $event) {
+				$operation = $this->_generateEventParams($event, $server);
+
+				if ($operation) {
+					$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
+					$this->logger->debug(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
+				}
+			}
 		}
 
 		// Cleanup processed update events
