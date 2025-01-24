@@ -17,6 +17,12 @@ use Psr\Log\LoggerInterface;
  */
 class ScimApiService {
 
+	private const ALLOWED_USER_ATTRIBUTES = [
+		'active' => 'active',
+		'displayName' => 'name.formatted',
+		'eMailAddress' => 'emails.value',
+	];
+
 	public function __construct(
 		private readonly IGroupManager $groupManager,
 		private readonly IUserManager $userManager,
@@ -240,5 +246,180 @@ class ScimApiService {
 			$bulkOperations = array_values(array_merge($userOperations, ...$groupOperations));
 			$this->sendBulkRequest($server, $bulkOperations);
 		}
+	}
+
+	/**
+	 * @param array $server
+	 * @param array $events
+	 * @return void
+	 */
+	public function updateScimServer(array $server, array $events): void {
+		$config = $this->getScimServerConfig($server);
+
+		$maxBulkOperations = $config['bulk']['maxOperations'];
+		$isBulkOperationsSupported = $config['bulk']['supported'] && $maxBulkOperations;
+
+		if ($isBulkOperationsSupported) {
+			$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
+			$this->sendBulkRequest($server, array_values(array_filter($operations)));
+			return;
+		}
+
+		foreach ($events as $event) {
+			$operation = $this->_generateEventParams($event, $server);
+
+			if ($operation) {
+				$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
+				$this->logger->debug(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
+			}
+		}
+	}
+
+	private function _generateEventParams(array $event, array $server): array {
+		if ($event['group_id']) {
+			// Get the corresponding group ID on the SCIM server,
+			// or use a bulk ID if group hasn't been created yet
+			$serverGroupId = $this->getScimServerGID($server, $event['group_id']) ?: ('bulkId:Group:' . $event['group_id']);
+		}
+
+		if ($event['user_id']) {
+			// Get the corresponding user ID on the SCIM server,
+			// or use a bulk ID if user hasn't been created yet
+			$serverUserId = $this->getScimServerUID($server, $event['user_id']) ?: ('bulkId:User:' . $event['user_id']);
+		}
+
+		if ($event['event'] === 'UserAddedEvent') {
+			return [
+				'method' => 'PATCH',
+				'path' => '/Groups/' . $serverGroupId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'add',
+							'path' => 'members',
+							'value' => [['value' => $serverUserId]],
+						],
+					],
+				],
+			];
+		}
+
+		if ($event['event'] === 'UserChangedEvent') {
+			if (!in_array($event['feature'], array_keys(self::ALLOWED_USER_ATTRIBUTES))) {
+				return [];
+			}
+
+			return [
+				'method' => 'PATCH',
+				'path' => '/Users/' . $serverUserId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'replace',
+							'path' => self::ALLOWED_USER_ATTRIBUTES[$event['feature']],
+							'value' => $event['value'],
+						],
+					],
+				],
+			];
+		}
+
+		if ($event['event'] === 'UserCreatedEvent') {
+			// If user already exists on server, replace the existing user instead
+			$serverUserExists = !str_starts_with($serverUserId, 'bulkId:');
+
+			return [
+				'method' => $serverUserExists ? 'PUT' : 'POST',
+				'path' => '/Users' . ($serverUserExists ? ('/' . $serverUserId) : ''),
+				'bulkId' => 'User:' . $event['user_id'],
+				'data' => [
+					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
+					'active' => true,
+					'externalId' => $event['user_id'],
+					'userName' => $event['user_id'],
+					'name' => ['formatted' => $event['user_id']],
+					// Some servers may require an email address, so use a temporary one here
+					'emails' => [['value' => 'change.me@example.com']],
+				],
+			];
+		}
+
+		if ($event['event'] === 'UserDeletedEvent') {
+			return [
+				'method' => 'DELETE',
+				'path' => '/Users/' . $serverUserId,
+			];
+		}
+
+		if ($event['event'] === 'UserRemovedEvent') {
+			return [
+				'method' => 'PATCH',
+				'path' => '/Groups/' . $serverGroupId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'remove',
+							'path' => 'members',
+							'value' => [['value' => $serverUserId]],
+						],
+					],
+				],
+			];
+		}
+
+		if ($event['event'] === 'GroupChangedEvent') {
+			if ($event['feature'] !== 'displayName') {
+				// Only displayName attribute is supported for now
+				return [];
+			}
+
+			return [
+				'method' => 'PATCH',
+				'path' => '/Groups/' . $serverGroupId,
+				'data' => [
+					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
+					'Operations' => [
+						[
+							'op' => 'replace',
+							'path' => $event['feature'],
+							'value' => $event['value'],
+						],
+					],
+				],
+			];
+		}
+
+		if ($event['event'] === 'GroupCreatedEvent') {
+			// If group already exists on server, replace the existing group instead
+			$serverGroupExists = !str_starts_with($serverGroupId, 'bulkId:');
+
+			return [
+				'method' => $serverGroupExists ? 'PUT' : 'POST',
+				'path' => '/Groups' . ($serverGroupExists ? ('/' . $serverGroupId) : ''),
+				'bulkId' => 'Group:' . $event['group_id'],
+				'data' => [
+					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
+					'externalId' => $event['group_id'],
+					'displayName' => $event['group_id'],
+				],
+			];
+		}
+
+		if ($event['event'] === 'GroupDeletedEvent') {
+			return [
+				'method' => 'DELETE',
+				'path' => '/Groups/' . $serverGroupId,
+			];
+		}
+
+		// Default case (unknown event)
+		$this->logger->warning(
+			sprintf('Unable to process unknown event (%s), skipping.', $event['event']),
+			['event' => $event],
+		);
+		return [];
 	}
 }
