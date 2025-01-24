@@ -15,7 +15,7 @@ Simply add your SCIM servers in the admin settings, and the app will automatical
 	<category>social</category>
 	<bugs>https://github.com/nextcloud/scim_client/issues</bugs>
 	<dependencies>
-		<nextcloud min-version="29" max-version="31"/>
+		<nextcloud min-version="30" max-version="31"/>
 	</dependencies>
 	<background-jobs>
 		<job>OCA\ScimClient\Cron\Sync</job>
