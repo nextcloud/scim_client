@@ -78,26 +78,26 @@ class Update extends TimedJob {
 		if ($event['group_id']) {
 			// Get the corresponding group ID on the SCIM server,
 			// or use a bulk ID if group hasn't been created yet
-			$groupId = $this->scimApiService->getScimServerGID($server, $event['group_id']) ?: ('bulkId:Group:' . $event['group_id']);
+			$serverGroupId = $this->scimApiService->getScimServerGID($server, $event['group_id']) ?: ('bulkId:Group:' . $event['group_id']);
 		}
 
 		if ($event['user_id']) {
 			// Get the corresponding user ID on the SCIM server,
 			// or use a bulk ID if user hasn't been created yet
-			$userId = $this->scimApiService->getScimServerUID($server, $event['user_id']) ?: ('bulkId:User:' . $event['user_id']);
+			$serverUserId = $this->scimApiService->getScimServerUID($server, $event['user_id']) ?: ('bulkId:User:' . $event['user_id']);
 		}
 
 		if ($event['event'] === 'UserAddedEvent') {
 			return [
 				'method' => 'PATCH',
-				'path' => '/Groups/' . $groupId,
+				'path' => '/Groups/' . $serverGroupId,
 				'data' => [
 					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 					'Operations' => [
 						[
 							'op' => 'add',
 							'path' => 'members',
-							'value' => [['value' => $userId]],
+							'value' => [['value' => $serverUserId]],
 						],
 					],
 				],
@@ -111,7 +111,7 @@ class Update extends TimedJob {
 
 			return [
 				'method' => 'PATCH',
-				'path' => '/Users/' . $userId,
+				'path' => '/Users/' . $serverUserId,
 				'data' => [
 					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 					'Operations' => [
@@ -126,9 +126,12 @@ class Update extends TimedJob {
 		}
 
 		if ($event['event'] === 'UserCreatedEvent') {
+			// If user already exists on server, replace the existing user instead
+			$serverUserExists = !str_starts_with($serverUserId, 'bulkId:');
+
 			return [
-				'method' => 'POST',
-				'path' => '/Users',
+				'method' => $serverUserExists ? 'PUT' : 'POST',
+				'path' => '/Users' . ($serverUserExists ? ('/' . $serverUserId) : ''),
 				'bulkId' => 'User:' . $event['user_id'],
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
@@ -145,21 +148,21 @@ class Update extends TimedJob {
 		if ($event['event'] === 'UserDeletedEvent') {
 			return [
 				'method' => 'DELETE',
-				'path' => '/Users/' . $userId,
+				'path' => '/Users/' . $serverUserId,
 			];
 		}
 
 		if ($event['event'] === 'UserRemovedEvent') {
 			return [
 				'method' => 'PATCH',
-				'path' => '/Groups/' . $groupId,
+				'path' => '/Groups/' . $serverGroupId,
 				'data' => [
 					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 					'Operations' => [
 						[
 							'op' => 'remove',
 							'path' => 'members',
-							'value' => [['value' => $userId]],
+							'value' => [['value' => $serverUserId]],
 						],
 					],
 				],
@@ -174,7 +177,7 @@ class Update extends TimedJob {
 
 			return [
 				'method' => 'PATCH',
-				'path' => '/Groups/' . $groupId,
+				'path' => '/Groups/' . $serverGroupId,
 				'data' => [
 					'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 					'Operations' => [
@@ -189,9 +192,12 @@ class Update extends TimedJob {
 		}
 
 		if ($event['event'] === 'GroupCreatedEvent') {
+			// If group already exists on server, replace the existing group instead
+			$serverGroupExists = !str_starts_with($serverGroupId, 'bulkId:');
+
 			return [
-				'method' => 'POST',
-				'path' => '/Groups',
+				'method' => $serverGroupExists ? 'PUT' : 'POST',
+				'path' => '/Groups' . ($serverGroupExists ? ('/' . $serverGroupId) : ''),
 				'bulkId' => 'Group:' . $event['group_id'],
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
@@ -204,7 +210,7 @@ class Update extends TimedJob {
 		if ($event['event'] === 'GroupDeletedEvent') {
 			return [
 				'method' => 'DELETE',
-				'path' => '/Groups/' . $groupId,
+				'path' => '/Groups/' . $serverGroupId,
 			];
 		}
 
