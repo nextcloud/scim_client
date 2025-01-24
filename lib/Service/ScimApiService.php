@@ -43,20 +43,32 @@ class ScimApiService {
 	/**
 	 * @param array $server
 	 * @param array $operations
-	 * @return void
+	 * @param int $maxOperations
+	 * @return array
 	 * @throws PreConditionNotMetException
 	 */
-	public function sendBulkRequest(array $server, array $operations): void {
-		// TODO: split bulk request according to $maxBulkOperations and adjust bulk/server IDs accordingly
-		// in the meantime, it is expected that $maxBulkOperations should be large enough to handle any number of operations
-		$params = [
-			'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
-			'Operations' => $operations,
-		];
-		$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
-		$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
+	public function sendBulkRequest(array $server, array &$operations, int $maxOperations): array {
+		$responses = [];
 
-		// TODO: parse response and handle any errors from each operation
+		while ($operations) {
+			$params = [
+				'schemas' => [Application::SCIM_API_SCHEMA . ':BulkRequest'],
+				'Operations' => array_splice($operations, 0, $maxOperations),
+			];
+
+			$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
+			$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
+			$responses = array_merge($responses, $response['Operations']);
+		}
+
+		foreach ($responses as $r) {
+			// TODO: handle any errors
+
+			// if ($response['status'] >= 400) {
+			// }
+		}
+
+		return $responses;
 	}
 
 	/**
@@ -153,19 +165,18 @@ class ScimApiService {
 
 		$users = $this->userManager->search('');
 		$groups = $this->groupManager->search('');
-		$serverUserIds = [];
+		$serverIds = [];
 
-		$userOperations = array_map(function (IUser $user) use ($server, &$serverUserIds, $isBulkOperationsSupported): array {
-			// If user already exists in server, replace existing user, otherwise create new user
+		$userOperations = array_map(function (IUser $user) use ($server, &$serverIds, $isBulkOperationsSupported): array {
 			$userId = $user->getUID();
-			$email = $user->getEmailAddress();
-			$serverUserId = $this->getScimServerUID($server, $userId);
-			$serverUserIds[$userId] = $serverUserId;
+			$userBulkId = 'User:' . $userId;
+			$serverIds[$userBulkId] = $this->getScimServerUID($server, $userId);
 
+			// If user already exists in server, replace existing user, otherwise create new user
 			$syncUserOperation = [
-				'method' => $serverUserId ? 'PUT' : 'POST',
-				'path' => '/Users' . ($serverUserId ? ('/' . $serverUserId) : ''),
-				'bulkId' => 'User:' . $userId,
+				'method' => $serverIds[$userBulkId] ? 'PUT' : 'POST',
+				'path' => '/Users' . ($serverIds[$userBulkId] ? ('/' . $serverIds[$userBulkId]) : ''),
+				'bulkId' => $userBulkId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':User'],
 					'active' => $user->isEnabled(),
@@ -175,27 +186,29 @@ class ScimApiService {
 						'formatted' => $user->getDisplayName(),
 					],
 					// Some servers may require an email address, so use a temporary one here
-					'emails' => [['value' => $email ?: 'change.me@example.com']],
+					'emails' => [['value' => $user->getEmailAddress() ?: 'change.me@example.com']],
 				],
 			];
 
 			if (!$isBulkOperationsSupported) {
 				$response = $this->networkService->request($server, $syncUserOperation['path'], $syncUserOperation['data'], $syncUserOperation['method']);
 				$this->logger->debug(sprintf('SCIM %s %s', $syncUserOperation['path'], $syncUserOperation['method']), ['responseBody' => $response]);
+				$serverIds[$userBulkId] = $response['id'] ?? '';
 			}
 
 			return $syncUserOperation;
 		}, $users);
 
-		$groupOperations = array_map(function (IGroup $group) use ($server, $serverUserIds, $isBulkOperationsSupported): array {
+		$groupOperations = array_map(function (IGroup $group) use ($server, &$serverIds, $isBulkOperationsSupported): array {
 			$groupId = $group->getGID();
-			$serverGroupId = $this->getScimServerGID($server, $groupId);
+			$groupBulkId = 'Group:' . $groupId;
+			$serverIds[$groupBulkId] = $this->getScimServerGID($server, $groupId);
 
-			// if the group does not exist in the server yet, create it, otherwise update it
+			// If group already exists in server, replace existing group, otherwise create new group
 			$syncGroupOperation = [
-				'method' => $serverGroupId ? 'PUT' : 'POST',
-				'path' => '/Groups' . ($serverGroupId ? ('/' . $serverGroupId) : ''),
-				'bulkId' => 'Group:' . $groupId,
+				'method' => $serverIds[$groupBulkId] ? 'PUT' : 'POST',
+				'path' => '/Groups' . ($serverIds[$groupBulkId] ? ('/' . $serverIds[$groupBulkId]) : ''),
+				'bulkId' => $groupBulkId,
 				'data' => [
 					'schemas' => [Application::SCIM_CORE_SCHEMA . ':Group'],
 					'displayName' => $group->getDisplayName(),
@@ -206,26 +219,44 @@ class ScimApiService {
 			if (!$isBulkOperationsSupported) {
 				$response = $this->networkService->request($server, $syncGroupOperation['path'], $syncGroupOperation['data'], $syncGroupOperation['method']);
 				$this->logger->debug(sprintf('SCIM %s %s', $syncGroupOperation['path'], $syncGroupOperation['method']), ['responseBody' => $response]);
-				$serverGroupId = $response['id'];
+				$serverIds[$groupBulkId] = $response['id'] ?? '';
 			}
 
-			$operations = [$syncGroupOperation];
+			return $syncGroupOperation;
+		}, $groups);
 
-			$addGroupUsers = array_map(function (IUser $user) use ($serverUserIds): array {
-				$userId = $user->getUID();
+		$bulkOperations = array_values(array_merge($userOperations, $groupOperations));
+		if ($isBulkOperationsSupported && ((2 * count($groups) + count($users)) > $maxBulkOperations)) {
+			// Total number of operations may exceed $maxBulkOperations, so push all users and groups first
+			// Retrieve server IDs of new users and groups for the remaining operations
+			$responses = $this->sendBulkRequest($server, $bulkOperations, $maxBulkOperations);
+
+			foreach ($responses as $response) {
+				if (($response['method'] === 'POST') && preg_match('/\/(Groups|Users)\/([-[:xdigit:]]+)$/', $response['location'] ?? '', $matches)) {
+					$serverIds[$response['bulkId']] = $matches[2];
+				}
+			}
+		}
+
+		$memberOperations = [];
+		foreach ($groups as $group) {
+			$addGroupUsers = array_map(function (IUser $user) use ($serverIds): array {
+				$userBulkId = 'User:' . $user->getUID();
 
 				return [
 					'op' => 'add',
 					'path' => 'members',
-					'value' => [['value' => $serverUserIds[$userId] ?: ('bulkId:User:' . $userId)]],
+					'value' => [['value' => $serverIds[$userBulkId] ?: ('bulkId:' . $userBulkId)]],
 				];
 			}, $group->getUsers());
 
 			if ($addGroupUsers) {
+				$groupBulkId = 'Group:' . $group->getGID();
+
 				// Copy group members to server
 				$syncMembersOperation = [
 					'method' => 'PATCH',
-					'path' => '/Groups/' . ($serverGroupId ?: ('bulkId:Group:' . $groupId)),
+					'path' => '/Groups/' . ($serverIds[$groupBulkId] ?: ('bulkId:' . $groupBulkId)),
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
 						'Operations' => $addGroupUsers,
@@ -237,15 +268,13 @@ class ScimApiService {
 					$this->logger->debug(sprintf('SCIM %s %s', $syncMembersOperation['path'], $syncMembersOperation['method']), ['responseBody' => $response]);
 				}
 
-				$operations[] = $syncMembersOperation;
+				$memberOperations[] = $syncMembersOperation;
 			}
-
-			return $operations;
-		}, $groups);
+		}
 
 		if ($isBulkOperationsSupported) {
-			$bulkOperations = array_values(array_merge($userOperations, ...$groupOperations));
-			$this->sendBulkRequest($server, $bulkOperations);
+			$bulkOperations = array_values(array_merge($bulkOperations, $memberOperations));
+			$this->sendBulkRequest($server, $bulkOperations, $maxBulkOperations);
 		}
 	}
 
@@ -262,7 +291,8 @@ class ScimApiService {
 
 		if ($isBulkOperationsSupported) {
 			$operations = array_map(fn (array $e): array => $this->_generateEventParams($e, $server), $events);
-			$this->sendBulkRequest($server, array_values(array_filter($operations)));
+			$operations = array_values(array_filter($operations));
+			$this->sendBulkRequest($server, $operations, $maxBulkOperations);
 			return;
 		}
 
