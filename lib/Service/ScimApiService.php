@@ -174,7 +174,8 @@ class ScimApiService {
 					'name' => [
 						'formatted' => $user->getDisplayName(),
 					],
-					'emails' => $email ? [['value' => $email]] : [],
+					// Some servers may require an email address, so use a temporary one here
+					'emails' => [['value' => $email ?: 'change.me@example.com']],
 				],
 			];
 
