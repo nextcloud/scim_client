@@ -327,30 +327,49 @@ class ScimApiService {
 		$isBulkOperationsSupported = $config['bulk']['supported'] && ($maxBulkOperations > 1);
 
 		if (!$isBulkOperationsSupported) {
-			foreach ($events as $event) {
+			foreach ($events as &$event) {
 				$operation = $this->_generateEventParams($event, $server);
+				$event['success'] = true;
 
 				if ($operation) {
 					$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
 					$this->logger->debug(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
+					$event['success'] = in_array(Application::SCIM_API_SCHEMA . ':Error', $response['schemas'] ?? []);
 				}
 			}
 
 			return;
 		}
 
-		while ($events) {
+		$pendingEvents = $events;
+		$i = 0;
+
+		while ($pendingEvents) {
 			$operations = [];
 
-			while ($events && (count($operations) < $maxBulkOperations)) {
-				$nextEvent = array_shift($events);
+			while ($pendingEvents && (count($operations) < $maxBulkOperations)) {
+				$nextEvent = array_shift($pendingEvents);
+
 				$operation = $this->_generateEventParams($nextEvent, $server);
 				if ($operation) {
-					$operations[] = $operation;
+					$operations[$i] = $operation;
 				}
+
+				$i++;
 			}
 
-			$this->sendBulkRequest($server, $operations, $maxBulkOperations);
+			$operationEvents = array_keys($operations);
+			$operations = array_values($operations);
+			$responses = $this->sendBulkRequest($server, $operations, $maxBulkOperations);
+
+			for ($j = 0; $j < count($responses); $j++) {
+				$success = $responses[$j]['status'] < 400;
+				$events[$operationEvents[$j]]['success'] = $events[$operationEvents[$j]]['success'] && $success;
+
+				if (!$success) {
+					$this->logger->error('SCIM /Bulk operation failed', ['responseBody' => $responses[$j]]);
+				}
+			}
 		}
 	}
 
