@@ -6,6 +6,7 @@ use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimServerService;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,7 +48,20 @@ class Sync extends Command {
 				return Command::FAILURE;
 			}
 
-			$this->scimApiService->syncScimServer($server->jsonSerialize());
+			$results = $this->scimApiService->syncScimServer($server->jsonSerialize());
+
+			$table = new Table($output);
+			$table->setHeaders(['Operation', 'User/Group ID', 'Status']);
+			$rows = array_map(static fn (array $result): array => [
+				$result['event'],
+				$result['id'],
+				$result['success'] ? 'Success' : 'Failed',
+			], $results);
+			$table->setRows($rows);
+			$table->render();
+
+			$status = array_count_values(array_map('intval', array_column($results, 'success')));
+			$output->writeln(sprintf('Summary: %u succeeded, %u failed', $status[1], $status[0]));
 		} catch (\Exception $e) {
 			$output->writeln('<error>Failed to sync server</error>');
 			$output->writeln($e->getMessage());
