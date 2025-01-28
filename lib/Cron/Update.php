@@ -34,16 +34,21 @@ class Update extends TimedJob {
 			return;
 		}
 
+		foreach ($events as &$e) {
+			$e['success'] = true;
+		}
+
 		$servers = $this->scimServerService->getRegisteredScimServers();
 
 		foreach ($servers as $server) {
 			$this->scimApiService->updateScimServer($server, $events);
 		}
 
-		// Cleanup processed update events
-		// TODO: keep the event instead if the corresponding operation is unsuccessful for at least one server, write error to server log
 		foreach ($events as $event) {
-			$this->scimEventService->deleteScimEvent(new ScimEvent($event));
+			if ($event['success']) {
+				// Update operation for the event succeeded on all servers, delete it
+				$this->scimEventService->deleteScimEvent(new ScimEvent($event));
+			}
 		}
 	}
 }
