@@ -32,10 +32,15 @@ class Sync extends TimedJob {
 			$server = $this->scimServerService->getScimServer($request['server_id']);
 
 			if ($server) {
-				$this->scimApiService->syncScimServer($server->jsonSerialize());
+				$results = $this->scimApiService->syncScimServer($server->jsonSerialize());
+				$syncSuccessful = array_reduce($results, fn (bool $prev, array $result): bool => $prev && $result['success'], true);
+
+				if (!$syncSuccessful) {
+					// At least one operation has failed, do not delete sync request event
+					continue;
+				}
 			}
 
-			// TODO: keep the event instead if the sync operation is unsuccessful, write error to server log
 			$this->scimSyncRequestService->deleteScimSyncRequest(new ScimSyncRequest($request));
 		}
 	}
