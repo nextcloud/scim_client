@@ -57,8 +57,9 @@ class ScimApiService {
 			];
 
 			$response = $this->networkService->request($server, '/Bulk', $params, 'POST');
-			$this->logger->debug('SCIM /Bulk POST', ['responseBody' => $response]);
-			$responses = array_merge($responses, $response['Operations']);
+			$success = in_array(Application::SCIM_API_SCHEMA . ':BulkResponse', $response['schemas'] ?? []);
+			$this->logger->{ $success ? 'debug' : 'error' }('SCIM /Bulk POST', ['responseBody' => $response]);
+			$responses = array_merge($responses, $response['Operations'] ?? []);
 		}
 
 		return $responses;
@@ -75,9 +76,10 @@ class ScimApiService {
 			'filter' => sprintf('externalId eq "%s"', $userId),
 		];
 		$results = $this->networkService->request($server, '/Users', $params, 'GET');
-		$this->logger->debug('SCIM /Users GET', ['responseBody' => $results]);
+		$success = $results && !$results['error'];
+		$this->logger->{ $success ? 'debug' : 'error' }('SCIM /Users GET', ['responseBody' => $results]);
 
-		if (!$results || $results['error']) {
+		if (!$success) {
 			return '';
 		}
 
@@ -96,9 +98,10 @@ class ScimApiService {
 			'filter' => sprintf('externalId eq "%s"', $groupId),
 		];
 		$results = $this->networkService->request($server, '/Groups', $params, 'GET');
-		$this->logger->debug('SCIM /Groups GET', ['responseBody' => $results]);
+		$success = $results && !$results['error'];
+		$this->logger->{ $success ? 'debug' : 'error' }('SCIM /Groups GET', ['responseBody' => $results]);
 
-		if (!$results || $results['error']) {
+		if (!$success) {
 			return '';
 		}
 
@@ -192,8 +195,8 @@ class ScimApiService {
 
 			if (!$isBulkOperationsSupported) {
 				$response = $this->networkService->request($server, $syncUserOperation['path'], $syncUserOperation['data'], $syncUserOperation['method']);
-				$this->logger->debug(sprintf('SCIM %s %s', $syncUserOperation['path'], $syncUserOperation['method']), ['responseBody' => $response]);
 				$userEvent['success'] = in_array(Application::SCIM_CORE_SCHEMA . ':User', $response['schemas'] ?? []);
+				$this->logger->{ $userEvent['success'] ? 'debug' : 'error' }(sprintf('SCIM %s %s', $syncUserOperation['path'], $syncUserOperation['method']), ['responseBody' => $response]);
 				$serverIds[$userBulkId] = $response['id'] ?? '';
 			}
 
@@ -226,8 +229,8 @@ class ScimApiService {
 
 			if (!$isBulkOperationsSupported) {
 				$response = $this->networkService->request($server, $syncGroupOperation['path'], $syncGroupOperation['data'], $syncGroupOperation['method']);
-				$this->logger->debug(sprintf('SCIM %s %s', $syncGroupOperation['path'], $syncGroupOperation['method']), ['responseBody' => $response]);
 				$groupEvent['success'] = in_array(Application::SCIM_CORE_SCHEMA . ':Group', $response['schemas'] ?? []);
+				$this->logger->{ $groupEvent['success'] ? 'debug' : 'error' }(sprintf('SCIM %s %s', $syncGroupOperation['path'], $syncGroupOperation['method']), ['responseBody' => $response]);
 				$serverIds[$groupBulkId] = $response['id'] ?? '';
 			}
 
@@ -290,8 +293,8 @@ class ScimApiService {
 
 				if (!$isBulkOperationsSupported) {
 					$response = $this->networkService->request($server, $syncMembersOperation['path'], $syncMembersOperation['data'], $syncMembersOperation['method']);
-					$this->logger->debug(sprintf('SCIM %s %s', $syncMembersOperation['path'], $syncMembersOperation['method']), ['responseBody' => $response]);
-					$groupEvent['success'] = in_array(Application::SCIM_API_SCHEMA . ':PatchOp', $response['schemas'] ?? []);
+					$membersEvent['success'] = in_array(Application::SCIM_API_SCHEMA . ':PatchOp', $response['schemas'] ?? []);
+					$this->logger->{ $membersEvent['success'] ? 'debug' : 'error' }(sprintf('SCIM %s %s', $syncMembersOperation['path'], $syncMembersOperation['method']), ['responseBody' => $response]);
 				}
 
 				$events['Members:' . $groupBulkId] = $membersEvent;
@@ -333,8 +336,8 @@ class ScimApiService {
 
 				if ($operation) {
 					$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
-					$this->logger->debug(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
 					$event['success'] = in_array(Application::SCIM_API_SCHEMA . ':Error', $response['schemas'] ?? []);
+					$this->logger->{ $event['success'] ? 'debug' : 'error' }(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
 				}
 			}
 
