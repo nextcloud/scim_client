@@ -5,6 +5,7 @@ namespace OCA\ScimClient\Command\Server;
 use OCA\ScimClient\AppInfo\Application;
 use OCA\ScimClient\Service\ScimApiService;
 use OCA\ScimClient\Service\ScimServerService;
+use OCA\ScimClient\Service\ScimSyncRequestService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,6 +16,7 @@ class Sync extends Command {
 	public function __construct(
 		private readonly ScimApiService $scimApiService,
 		private readonly ScimServerService $scimServerService,
+		private readonly ScimSyncRequestService $scimSyncRequestService,
 	) {
 		parent::__construct();
 	}
@@ -62,6 +64,11 @@ class Sync extends Command {
 
 			$status = array_count_values(array_map('intval', array_column($results, 'success')));
 			$output->writeln(sprintf('Summary: %u succeeded, %u failed', $status[1], $status[0]));
+
+			if (!$status[0]) {
+				// All sync operations completed successfully, delete any pending sync events
+				$this->scimSyncRequestService->deleteScimSyncRequestsByServerId($server->getId());
+			}
 		} catch (\Exception $e) {
 			$output->writeln('<error>Failed to sync server</error>');
 			$output->writeln($e->getMessage());
