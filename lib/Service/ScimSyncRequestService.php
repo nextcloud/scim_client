@@ -43,6 +43,15 @@ class ScimSyncRequestService {
 		}
 	}
 
+	public function deleteScimSyncRequestsByServerId(int $serverId): array {
+		try {
+			return array_map([$this->mapper, 'delete'], $this->mapper->findAllByServerId($serverId));
+		} catch (Exception $e) {
+			$this->logger->error('Failed to delete SCIM sync requests by server ID. Error: ' . $e->getMessage(), ['exception' => $e]);
+			return [];
+		}
+	}
+
 	public function getScimSyncRequests(): array {
 		try {
 			return array_map(static fn (ScimSyncRequest $s): array => $s->jsonSerialize(), $this->mapper->findAll());
