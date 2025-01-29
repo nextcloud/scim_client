@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-01-29
+
 ### Added
 
-- First release
+- Initial app release.
+
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/nextcloud/scim_client/releases/tag/v1.0.0
