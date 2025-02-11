@@ -1,0 +1,16 @@
+OC.L10N.register(
+    "scim_client",
+    {
+    "Bad HTTP method" : "错误的 HTTP 方法",
+    "Bad credentials" : "错误的凭据",
+    "Cancel" : "取消",
+    "Delete" : "删除",
+    "Name" : "名称",
+    "Server URL" : "服务器 URL",
+    "API Key" : "API 密匙",
+    "Save" : "保存",
+    "Register" : "注册",
+    "Sync" : "同步",
+    "Edit" : "编辑"
+},
+"nplurals=1; plural=0;");

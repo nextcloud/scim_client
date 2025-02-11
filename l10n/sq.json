@@ -1,0 +1,10 @@
+{ "translations": {
+    "Cancel" : "Anuloje",
+    "Delete" : "Fshi",
+    "Name" : "Emër",
+    "Save" : "Ruaje",
+    "Register" : "Regjistrohu",
+    "Sync" : "Sinkronizo",
+    "Edit" : "Përpuno"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

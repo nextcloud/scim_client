@@ -1,0 +1,12 @@
+{ "translations": {
+    "Bad credentials" : "Forkerte legitimationsoplysninger",
+    "Cancel" : "Annuller",
+    "Delete" : "Slet",
+    "Name" : "Navn",
+    "Server URL" : "Server URL",
+    "Save" : "Gem",
+    "Register" : "Registrer",
+    "Sync" : "Synkronisér",
+    "Edit" : "Rediger"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

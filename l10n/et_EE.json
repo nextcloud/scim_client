@@ -1,0 +1,10 @@
+{ "translations": {
+    "Cancel" : "Tühista",
+    "Delete" : "Kustuta",
+    "Name" : "Nimi",
+    "Save" : "Salvesta",
+    "Register" : "Registreeru",
+    "Sync" : "Sünkrooni",
+    "Edit" : "Redigeeri"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

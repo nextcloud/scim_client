@@ -1,0 +1,13 @@
+{ "translations": {
+    "Bad HTTP method" : "Foute HTTP methode",
+    "Bad credentials" : "Foute inloggegevens",
+    "Cancel" : "Annuleren",
+    "Delete" : "Verwijder",
+    "Name" : "Naam",
+    "Server URL" : "Server URL",
+    "Save" : "Opslaan",
+    "Register" : "Aanmelden",
+    "Sync" : "Synchroniseren",
+    "Edit" : "Bewerken"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

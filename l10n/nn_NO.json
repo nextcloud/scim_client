@@ -1,0 +1,7 @@
+{ "translations": {
+    "Delete" : "Slett",
+    "Name" : "Namn",
+    "Save" : "Lagre",
+    "Edit" : "Rediger"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

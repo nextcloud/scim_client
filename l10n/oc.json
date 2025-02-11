@@ -1,0 +1,10 @@
+{ "translations": {
+    "Bad credentials" : "Marrits identificants",
+    "Cancel" : "Anullar",
+    "Delete" : "Suprimir",
+    "Name" : "Nom",
+    "Save" : "Enregistrar",
+    "Register" : "S'inscriure",
+    "Edit" : "Modificar"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
+}

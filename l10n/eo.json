@@ -1,0 +1,9 @@
+{ "translations": {
+    "Delete" : "Forigi",
+    "Name" : "Nomo",
+    "Save" : "Konservi",
+    "Register" : "Registriĝi",
+    "Sync" : "Sinkronigi",
+    "Edit" : "Modifi"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

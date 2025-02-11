@@ -1,0 +1,17 @@
+{ "translations": {
+    "Bad HTTP method" : "Ungültige HTTP-Methode",
+    "Bad credentials" : "Falsche Anmeldeinformationen",
+    "Cancel" : "Abbrechen",
+    "Delete" : "Löschen",
+    "Name" : "Name",
+    "Server URL" : "Server-URL",
+    "API Key" : "API-Schlüssel",
+    "Save" : "Speichern",
+    "Register" : "Registrieren",
+    "Check connection" : "Verbindung prüfen",
+    "URL should start with http:// or https://" : "Die URL muss mit http:// oder https:// beginnen",
+    "Password confirmation failed" : "Fehler bei der Passwortbestätigung",
+    "Sync" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
+    "Edit" : "Bearbeiten"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

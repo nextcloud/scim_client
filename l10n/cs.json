@@ -1,0 +1,17 @@
+{ "translations": {
+    "Bad HTTP method" : "Nesprávná HTTP metoda",
+    "Bad credentials" : "Nesprávné přihlašovací údaje",
+    "Cancel" : "Storno",
+    "Delete" : "Smazat",
+    "Name" : "Název",
+    "Server URL" : "URL adresa serveru",
+    "API Key" : "Klíč k API",
+    "Save" : "Uložit",
+    "Register" : "Registrovat",
+    "Check connection" : "Zkontrolovat připojení",
+    "URL should start with http:// or https://" : "URL by měly začínat na http:// nebo https://",
+    "Password confirmation failed" : "Potvrzení hesla se nezdařilo",
+    "Sync" : "Synchronizovat",
+    "Edit" : "Upravit"
+},"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
+}

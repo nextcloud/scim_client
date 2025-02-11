@@ -1,0 +1,11 @@
+{ "translations": {
+    "Bad credentials" : "Gölluð auðkenni",
+    "Cancel" : "Hætta við",
+    "Delete" : "Eyða",
+    "Name" : "Heiti",
+    "Save" : "Vista",
+    "Register" : "Nýskráning",
+    "Sync" : "Samstilla",
+    "Edit" : "Breyta"
+},"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
+}

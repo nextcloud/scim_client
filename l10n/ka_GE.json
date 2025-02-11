@@ -1,0 +1,9 @@
+{ "translations": {
+    "Cancel" : "გაუქმება",
+    "Delete" : "წაშლა",
+    "Name" : "სახელი",
+    "Save" : "შენახვა",
+    "Register" : "რეგისტრაცია",
+    "Edit" : "შეცვლა"
+},"pluralForm" :"nplurals=2; plural=(n!=1);"
+}
