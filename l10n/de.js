@@ -37,6 +37,7 @@ OC.L10N.register(
     "Registered servers list" : "Liste registrierter Server",
     "No servers configured" : "Keine Server eingerichtet",
     "Register a new server below and fill in the required details" : "Registriere unten einen neuen Server und fülle die benötigten Informationen aus",
+    "Sync" : "Synchronisieren",
     "Edit" : "Bearbeiten",
     "Sync request successful. This may take a while" : "Synchronisationsanfrage erfolgreich. Dies kann einen Moment dauern",
     "Sync request failed. Check the logs" : "Synchronisationsanfrage fehlgeschlagen Prüfe die Protokolle",
