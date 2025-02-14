@@ -1,7 +1,7 @@
 OC.L10N.register(
     "scim_client",
     {
-    "Bad HTTP method" : "Dårlig HTTP-metode",
+    "Bad HTTP method" : "Dårlig HTTP metode",
     "Bad credentials" : "Forkerte legitimationsoplysninger",
     "Identity Management" : "Identitetsstyring",
     "SCIM Client" : "SCIM Klient",
@@ -37,7 +37,7 @@ OC.L10N.register(
     "Registered servers list" : "Registrerede server liste",
     "No servers configured" : "Ingen servere konfigureret",
     "Register a new server below and fill in the required details" : "Registrer en ny server nedenfor og udfyld de nødvendige oplysninger",
-    "Sync" : "Synkronisér",
+    "Sync" : "Synkroniser",
     "Edit" : "Rediger",
     "Sync request successful. This may take a while" : "Synkroniseringsanmodning gennemført. Dette kan tage et stykke tid",
     "Sync request failed. Check the logs" : "Synkroniseringsanmodning mislykkedes. Tjek logfilerne",
