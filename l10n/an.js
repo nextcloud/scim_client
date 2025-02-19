@@ -1,7 +1,7 @@
 OC.L10N.register(
     "scim_client",
     {
-    "Cancel" : "Canzelar",
+    "Cancel" : "Cancelar",
     "Delete" : "Borrar",
     "Name" : "Nombre"
 },
