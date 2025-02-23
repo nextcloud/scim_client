@@ -1,6 +1,8 @@
 {
   "name": "scim_client",
+  "description": "Nextcloud SCIM Client",
   "version": "1.0.0",
+  "author": "Nextcloud GmbH and Nextcloud contributors",
   "license": "AGPL-3.0-or-later",
   "engines": {
     "node": "^20.0.0",
