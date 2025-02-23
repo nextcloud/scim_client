@@ -4,6 +4,8 @@
 -->
 # SCIM Client
 
+[![REUSE status](https://api.reuse.software/badge/github.com/nextcloud/scim_client)](https://api.reuse.software/info/github.com/nextcloud/scim_client)
+
 Use Nextcloud as an identity provider for external services
 using the [SCIM] standard.
 
