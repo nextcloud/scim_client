@@ -4,6 +4,7 @@ OC.L10N.register(
     "Delete" : "Kkes",
     "Name" : "Nom",
     "Save" : "Sekles",
+    "Sync" : "Mtawi",
     "Edit" : "Ẓreg"
 },
 "nplurals=2; plural=(n != 1);");

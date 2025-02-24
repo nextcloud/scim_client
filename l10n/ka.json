@@ -3,6 +3,8 @@
     "Delete" : "Delete",
     "Name" : "Name",
     "Save" : "Save",
-    "Register" : "Register"
+    "Register" : "Register",
+    "Sync" : "Sync",
+    "Edit" : "Edit"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

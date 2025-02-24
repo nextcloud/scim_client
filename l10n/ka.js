@@ -5,6 +5,8 @@ OC.L10N.register(
     "Delete" : "Delete",
     "Name" : "Name",
     "Save" : "Save",
-    "Register" : "Register"
+    "Register" : "Register",
+    "Sync" : "Sync",
+    "Edit" : "Edit"
 },
 "nplurals=2; plural=(n!=1);");

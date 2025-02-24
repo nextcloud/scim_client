@@ -1,5 +1,8 @@
 { "translations": {
     "Cancel" : "չեղարկել",
-    "Delete" : "հեռացնել"
+    "Delete" : "հեռացնել",
+    "Name" : "Անուն",
+    "Save" : "Պահպանել",
+    "Edit" : "մշակել"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

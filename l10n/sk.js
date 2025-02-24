@@ -10,6 +10,8 @@ OC.L10N.register(
     "API Key" : "API kľúč",
     "Save" : "Uložiť",
     "Register" : "Registrovať",
+    "Check connection" : "Skontrolovať pripojenie",
+    "URL should start with http:// or https://" : "URL musí začínať na http:// alebo https://",
     "Password confirmation failed" : "Overenie hesla zlyhalo",
     "Sync" : "Synchronizovať",
     "Edit" : "Upraviť"

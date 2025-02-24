@@ -6,6 +6,7 @@ OC.L10N.register(
     "Name" : "სახელი",
     "Save" : "შენახვა",
     "Register" : "რეგისტრაცია",
+    "Sync" : "სინქ",
     "Edit" : "შეცვლა"
 },
 "nplurals=2; plural=(n!=1);");
