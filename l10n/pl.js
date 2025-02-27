@@ -5,12 +5,12 @@ OC.L10N.register(
     "Bad credentials" : "Złe poświadczenia",
     "Cancel" : "Anuluj",
     "Delete" : "Usuń",
+    "Password confirmation failed" : "Potwierdzenie hasła nie powiodło się",
     "Name" : "Nazwa",
     "API Key" : "Klucz API",
     "Save" : "Zapisz",
     "Register" : "Zarejestruj się",
     "Check connection" : "Sprawdź połączenie",
-    "Password confirmation failed" : "Potwierdzenie hasła nie powiodło się",
     "Sync" : "Synchronizuj",
     "Edit" : "Edycja"
 },

@@ -3,14 +3,14 @@
     "Bad credentials" : "Nesprávne prihlasovacie údaje",
     "Cancel" : "Zrušiť",
     "Delete" : "Vymazať",
+    "URL should start with http:// or https://" : "URL musí začínať na http:// alebo https://",
+    "Password confirmation failed" : "Overenie hesla zlyhalo",
     "Name" : "Názov",
     "Server URL" : "URL servera",
     "API Key" : "API kľúč",
     "Save" : "Uložiť",
     "Register" : "Registrovať",
     "Check connection" : "Skontrolovať pripojenie",
-    "URL should start with http:// or https://" : "URL musí začínať na http:// alebo https://",
-    "Password confirmation failed" : "Overenie hesla zlyhalo",
     "Sync" : "Synchronizovať",
     "Edit" : "Upraviť"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
