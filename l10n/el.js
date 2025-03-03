@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "Εσφαλμένα διαπιστευτήρια",
     "Cancel" : "Ακύρωση",
     "Delete" : "Διαγραφή",
+    "Password confirmation failed" : "Η επιβεβαίωση του κωδικού πρόσβασης απέτυχε",
     "Name" : "Όνομα",
     "Server URL" : "URL διακομιστή",
     "Save" : "Αποθήκευση",
