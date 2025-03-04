@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "Hibás hitelesítő adatok",
     "Cancel" : "Mégse",
     "Delete" : "Törlés",
+    "Password confirmation failed" : "A jelszó megerősítése nem sikerült",
     "Name" : "Név",
     "Server URL" : "Kiszolgáló webcíme",
     "API Key" : "API-kulcs",
