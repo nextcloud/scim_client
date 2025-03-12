@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "Cancel" : "Cancel",
     "Delete" : "Delete",
-    "Name" : "Name"
+    "Name" : "Name",
+    "Save" : "Saqlash",
+    "Edit" : "Tahrirlash"
 },
 "nplurals=1; plural=0;");

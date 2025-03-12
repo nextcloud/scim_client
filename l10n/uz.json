@@ -1,6 +1,8 @@
 { "translations": {
     "Cancel" : "Cancel",
     "Delete" : "Delete",
-    "Name" : "Name"
+    "Name" : "Name",
+    "Save" : "Saqlash",
+    "Edit" : "Tahrirlash"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
