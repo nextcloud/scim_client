@@ -4,6 +4,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Delete" : "Delete",
     "Name" : "Name",
+    "Server URL" : "Server URL manzili",
     "Save" : "Saqlash",
     "Edit" : "Tahrirlash"
 },
