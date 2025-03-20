@@ -5,6 +5,8 @@ OC.L10N.register(
     "Bad credentials" : "Credencials dolentes",
     "Cancel" : "Cancel·la",
     "Delete" : "Suprimir",
+    "URL should start with http:// or https://" : "L'URL hauria de començar per http:// o https://",
+    "Password confirmation failed" : "La confirmació de la contrasenya ha fallat",
     "Name" : "Nom",
     "Save" : "Desar",
     "Register" : "Registra",
