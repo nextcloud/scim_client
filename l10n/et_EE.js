@@ -1,6 +1,8 @@
 OC.L10N.register(
     "scim_client",
     {
+    "Bad HTTP method" : "Vigane HTTP-meetod",
+    "Bad credentials" : "Vale kasutajanimi, salasõna või tunnusluba",
     "Cancel" : "Tühista",
     "Delete" : "Kustuta",
     "Name" : "Nimi",
