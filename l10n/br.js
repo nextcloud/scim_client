@@ -2,7 +2,7 @@ OC.L10N.register(
     "scim_client",
     {
     "Cancel" : "Nullañ",
-    "Delete" : "Lemel",
+    "Delete" : "Dilemel",
     "Name" : "Anv",
     "Save" : "Enrollañ",
     "Sync" : "Kemprenañ",
