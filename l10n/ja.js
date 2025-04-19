@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "不正な資格情報",
     "Cancel" : "キャンセル",
     "Delete" : "削除",
+    "Password confirmation failed" : "パスワードの確認に失敗しました",
     "Name" : "名前",
     "Server URL" : "サーバーURL",
     "Save" : "保存する",
