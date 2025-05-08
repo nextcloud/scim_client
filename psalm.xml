@@ -7,6 +7,7 @@
 	errorLevel="4"
 	findUnusedBaselineEntry="true"
 	findUnusedCode="false"
+	ensureOverrideAttribute="false"
 	phpVersion="8.1"
 	resolveFromConfigFile="true"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
