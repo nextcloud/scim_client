@@ -6,6 +6,7 @@ OC.L10N.register(
     "Cancel" : "Tühista",
     "Delete" : "Kustuta",
     "Name" : "Nimi",
+    "Server URL" : "Serveri võrguaadress",
     "Save" : "Salvesta",
     "Register" : "Registreeru",
     "Sync" : "Sünkrooni",
