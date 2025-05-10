@@ -23,7 +23,7 @@ OC.L10N.register(
     "Server successfully registered, initial sync started" : "Serverregistrierung erfolgreich, initiale Synchronisierung gestartet",
     "Failed to register server. Check the logs" : "Server konnte nicht registriert werden. Prüfen Sie die Protokolle.",
     "Password confirmation failed" : "Fehler bei der Passwortbestätigung",
-    "Server successfully updated" : "Server erfolgreich aktualisiert",
+    "Server successfully updated" : "Server aktualisiert",
     "Failed to update server. Check the logs" : "Server konnte nicht aktualisiert werden. Prüfen Sie die Protokolle.",
     "Name" : "Name",
     "Server Nickname" : "Server-Spitzname",
@@ -37,7 +37,7 @@ OC.L10N.register(
     "Registered servers list" : "Liste registrierter Server",
     "No servers configured" : "Keine Server eingerichtet",
     "Register a new server below and fill in the required details" : "Registrieren Sie unten einen neuen Server und füllen Sie die benötigten Informationen aus",
-    "Server successfully deleted" : "Server erfolgreich gelöscht",
+    "Server successfully deleted" : "Server gelöscht",
     "Failed to delete server. Check the logs" : "Server konnte nicht gelöscht werden. Prüfen Sie die Protokolle.",
     "Sync" : "Synchronisieren",
     "Edit" : "Bearbeiten"
