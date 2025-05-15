@@ -12,7 +12,7 @@ SPDX-FileCopyrightText = "2024 Nextcloud translators"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = ["composer.json", "composer.lock", "openapi.json", "package-lock.json", "package.json", "vendor-bin/cs-fixer/composer.json", "vendor-bin/cs-fixer/composer.lock", "vendor-bin/openapi-extractor/composer.json", "vendor-bin/openapi-extractor/composer.lock", "vendor-bin/phpunit/composer.json", "vendor-bin/phpunit/composer.lock", "vendor-bin/psalm/composer.json", "vendor-bin/psalm/composer.lock", "vendor-bin/rector/composer.json", "vendor-bin/rector/composer.lock"]
+path = ["composer.json", "composer.lock", "package-lock.json", "package.json", "vendor-bin/cs-fixer/composer.json", "vendor-bin/cs-fixer/composer.lock", "vendor-bin/phpunit/composer.json", "vendor-bin/phpunit/composer.lock", "vendor-bin/psalm/composer.json", "vendor-bin/psalm/composer.lock", "vendor-bin/rector/composer.json", "vendor-bin/rector/composer.lock"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2024 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
