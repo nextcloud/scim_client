@@ -9,9 +9,6 @@
 Use Nextcloud as an identity provider for external services
 using the [SCIM] standard.
 
-> [!WARNING]
-> This app is still under development.
-
 With this app,
 you can sync Nextcloud users and groups to any number of SCIM servers
 (specified in the administration settings).
@@ -90,18 +87,7 @@ or by using the `occ` command:
 
 ![Admin settings](img/screenshot-settings-dark.png)
 
-<!-- TODO: uncomment once Andy has added the REUSE headers
-## License
-
-See each individual file for details, but in general,
-this project is licensed under [AGPL-3.0-or-later].
-
-This project adheres to the [REUSE Specification].
--->
-
 <!-- Links -->
 
 [SCIM]: https://scim.cloud/
 [App Store]: https://apps.nextcloud.com/apps/scim_client
-<!-- [AGPL-3.0-or-later]: ./LICENSES/AGPL-3.0-or-later.txt -->
-<!-- [REUSE Specification]: https://reuse.software/spec/ -->
