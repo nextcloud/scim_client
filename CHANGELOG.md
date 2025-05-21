@@ -11,6 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2025-05-21
+
+### Added
+
+- REUSE compliance. #37
+
+### Changed
+
+- Update npm packages. #31 #32 #34 #35 #53 #55 #58 #61 #62 #67 #69
+- Update Psalm CI tests. #59
+- Update GitHub Actions workflows. #43 #63
+- Update Dependabot. #60 #64
+
+### Removed
+
+- OpenAPI specification and extractor. #66
+
 ## [1.0.2] - 2025-01-31
 
 ### Fixed
@@ -29,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial app release.
 
-[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/nextcloud/scim_client/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/nextcloud/scim_client/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/nextcloud/scim_client/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/nextcloud/scim_client/releases/tag/v1.0.0
