@@ -4,7 +4,6 @@
     "Identity Management" : "Gestión de Identidad",
     "SCIM Client" : "Cliente SCIM",
     "Use Nextcloud as an SCIM identity provider" : "Utilizar Nextcloud como un proveedor de identidad SCIM",
-    "Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.\n\nSimply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers.\n\n⚠ This app is still under development." : "Use Nextcloud como un proveedor de identidad para servicios externos utilizando el estándar [SCIM](https://scim.cloud/)\nSimplemente agregue sus servidores SCIM en las configuraciones de administrador, y, la app sincronizará automáticamente a todos los usuarios y grupos a sus servidores.\n⚠ Esta app se encuentra todavía en desarrollo.",
     "Use Nextcloud as an identity provider for external services using the SCIM standard." : "Utilizar Nextcloud como un proveedor de identidad para servicios externos utilizando el estándar SCIM.",
     "Delete Server Confirmation" : "Confirmación de eliminación del Servidor",
     "Are you sure you want to delete this server?" : "¿Está seguro de que desea eliminar este servidor?",

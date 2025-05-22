@@ -6,7 +6,6 @@ OC.L10N.register(
     "Identity Management" : "Kimlik yönetimi",
     "SCIM Client" : "SCIM istemcisi",
     "Use Nextcloud as an SCIM identity provider" : "SCIM kimlik hizmeti sağlayıcısı olarak Nextcloud kullanın",
-    "Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.\n\nSimply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers.\n\n⚠ This app is still under development." : "[SCIM](https://scim.cloud/) standardını kullanarak dış hizmetler için kimlik hizmeti sağlayıcı olarak Nextcloud kullanın.\n\nSCIM sunucularınızı yönetici ayarlarına eklemeniz yeterlidir. Uygulama tüm Nextcloud kullanıcılarını ve gruplarını sunucularınızla otomatik olarak eşitler.\n\n⚠ Bu uygulama henüz geliştirilme aşamasındadır.",
     "Use Nextcloud as an identity provider for external services using the SCIM standard." : "SCIM standardını kullanarak dış hizmetler için kimlik hizmeti sağlayıcı olarak Nextcloud kullanın.",
     "Delete Server Confirmation" : "Sunucu silme onayı",
     "Are you sure you want to delete this server?" : "Bu sunucuyu silmek istediğinize emin misiniz?",

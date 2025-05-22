@@ -6,7 +6,6 @@ OC.L10N.register(
     "Identity Management" : "Bainistíocht Aitheantais",
     "SCIM Client" : "Cliant SCIM",
     "Use Nextcloud as an SCIM identity provider" : "Úsáid Nextcloud mar sholáthraí aitheantais SCIM",
-    "Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.\n\nSimply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers.\n\n⚠ This app is still under development." : "Úsáid Nextcloud mar sholáthraí aitheantais do sheirbhísí seachtracha ag baint úsáide as an gcaighdeán [SCIM](https://scim.cloud/).\n\nNíl ort ach do fhreastalaithe SCIM a chur leis na socruithe riaracháin, agus déanfaidh an aip gach úsáideoir agus grúpa Nextcloud a shioncronú go huathoibríoch le do fhreastalaithe.\n\n⚠ Tá an aip seo fós á forbairt.",
     "Use Nextcloud as an identity provider for external services using the SCIM standard." : "Úsáid Nextcloud mar sholáthraí aitheantais do sheirbhísí seachtracha ag baint úsáide as an gcaighdeán SCIM.",
     "Delete Server Confirmation" : "Scrios Deimhniú Freastalaí",
     "Are you sure you want to delete this server?" : "An bhfuil tú cinnte go dteastaíonn uait an freastalaí seo a scriosadh?",

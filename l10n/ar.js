@@ -6,7 +6,6 @@ OC.L10N.register(
     "Identity Management" : "إدارة الهُوِيَّات",
     "SCIM Client" : "عميل SCIM لإدارة الهُوِيَّات عبر النطاقات والتطبيقات المتعددة",
     "Use Nextcloud as an SCIM identity provider" : "إستَعمِل نكست كلاود كمزود لخدمة إدارة الهُوِيَّات SCIM",
-    "Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.\n\nSimply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers.\n\n⚠ This app is still under development." : "استَعمِل نكست كلاود كمزود لإدارة الهُوِيَّات للخدمات الخارجية باستخدام المعيار [SCIM](https://scim.cloud/). \n\nما عليك سوى إضافة خوادم SCIM الخاصة بك في إعدادات الإدارة، وسيقوم التطبيق تلقائياً بمزامنة جميع مستخدمي ومجموعات نكست كلاود مع خوادمك. \n\n⚠ هذا التطبيق لا يزال قيد التطوير.",
     "Use Nextcloud as an identity provider for external services using the SCIM standard." : "إستَعمِل نكست كلاود كمزود لخدمة إدارة الهُوِيَّات للخدمات الخارجية باستخدام المعيار SCIM.",
     "Delete Server Confirmation" : "تأكيد على حذف الخادوم",
     "Are you sure you want to delete this server?" : "هل انت متأكد أنك تريد حذف هذا الخادوم؟",
