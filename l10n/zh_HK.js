@@ -6,6 +6,7 @@ OC.L10N.register(
     "Identity Management" : "身份管理",
     "SCIM Client" : "SCIM 客戶端",
     "Use Nextcloud as an SCIM identity provider" : "使用 Nextcloud 作為 SCIM 身份提供者",
+    "Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.\n\nSimply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers." : "使用 Nextcloud 作為外部服務的身份提供者，您可以利用 [SCIM](https://scim.cloud/) 標準來簡化用戶和群組的同步。只需在管理設置中添加您的 SCIM 伺服器，該應用程式將自動將所有 Nextcloud 用戶和群組同步到您的伺服器。",
     "Use Nextcloud as an identity provider for external services using the SCIM standard." : "使用 Nextcloud 利用 SCIM 標準作為外部服務的身份提供者。",
     "Delete Server Confirmation" : "刪除伺服器確認",
     "Are you sure you want to delete this server?" : "您確定要刪除這伺服器嗎？",
