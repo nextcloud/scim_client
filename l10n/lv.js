@@ -8,6 +8,7 @@ OC.L10N.register(
     "Name" : "Nosaukums",
     "Server URL" : "Servera URL",
     "Save" : "Saglabāt",
+    "Failed to delete server. Check the logs" : "Neizdevās izdzēst serveri. Jāpārbauda žurnāli",
     "Sync" : "Sinhronizēt",
     "Edit" : "Labot"
 },
