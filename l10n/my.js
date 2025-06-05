@@ -2,9 +2,6 @@ OC.L10N.register(
     "scim_client",
     {
     "Cancel" : "Cancel",
-    "Delete" : "Padam",
-    "Name" : "Nama",
-    "Save" : "Simpan",
-    "Edit" : "Sunting"
+    "Edit" : "တည်းဖြတ်ပါ"
 },
 "nplurals=1; plural=0;");
