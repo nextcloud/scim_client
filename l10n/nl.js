@@ -5,10 +5,13 @@ OC.L10N.register(
     "Bad credentials" : "Foute inloggegevens",
     "Cancel" : "Annuleren",
     "Delete" : "Verwijder",
+    "URL should start with http:// or https://" : "URL moet beginnen met http:// of https://",
+    "Password confirmation failed" : "Wachtwoordbevestiging niet gelukt",
     "Name" : "Naam",
     "Server URL" : "Server URL",
     "Save" : "Opslaan",
     "Register" : "Aanmelden",
+    "Check connection" : "Controleer verbinding",
     "Sync" : "Synchroniseren",
     "Edit" : "Bewerken"
 },
