@@ -7,6 +7,7 @@ OC.L10N.register(
     "Delete" : "Futa",
     "Name" : "Jina",
     "Save" : "Hifadhi",
+    "Register" : "Sajiri",
     "Edit" : "Hariri"
 },
 "nplurals=2; plural=(n != 1);");
