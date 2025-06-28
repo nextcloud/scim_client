@@ -37,6 +37,8 @@ OC.L10N.register(
     "Registered servers list" : "Листа регистрованих сервера",
     "No servers configured" : "Није подешена ниједан сервер",
     "Register a new server below and fill in the required details" : "Региструјте нови сервер испод и испуните неопходне детаље",
+    "Sync request successful. This may take a while" : "Захтев за синхронизацију је успешан. Ово може да потраје",
+    "Sync request failed. Check the logs" : "Није успео захтев за синхронизацију. Погледајте дневнике",
     "Server successfully deleted" : "Сервер је успешно обрисан",
     "Failed to delete server. Check the logs" : "Није успело брисање сервера. Погледајте дневнике",
     "Sync" : "Синхронизуј",

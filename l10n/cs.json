@@ -34,6 +34,8 @@
     "Registered servers list" : "Seznam zaregistrovaných serverů",
     "No servers configured" : "Nejsou nastavené žádné servery",
     "Register a new server below and fill in the required details" : "Nový server zaregistrujete níže a vyplňte potřebné údaje",
+    "Sync request successful. This may take a while" : "Požadavek na synchronizaci úspěšný. Může to chvíli trvat",
+    "Sync request failed. Check the logs" : "Požadavek na synchronizaci se nezdařil. Podívejte se do záznamů událostí",
     "Server successfully deleted" : "Server úspěšně smazán",
     "Failed to delete server. Check the logs" : "Server se nepodařilo smazat. Podívejte se do záznamu událostí",
     "Sync" : "Synchronizovat",

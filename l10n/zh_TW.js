@@ -37,6 +37,8 @@ OC.L10N.register(
     "Registered servers list" : "已註冊的伺服器清單",
     "No servers configured" : "未設定伺服器",
     "Register a new server below and fill in the required details" : "在下方註冊伺服器，並填入必要的資訊",
+    "Sync request successful. This may take a while" : "同步請求成功。這可能需要一點時間",
+    "Sync request failed. Check the logs" : "同步請求失敗。請檢查紀錄檔",
     "Server successfully deleted" : "已成功刪除伺服器",
     "Failed to delete server. Check the logs" : "刪除伺服器失敗。請檢查紀錄檔",
     "Sync" : "同步",

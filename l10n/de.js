@@ -37,6 +37,8 @@ OC.L10N.register(
     "Registered servers list" : "Liste registrierter Server",
     "No servers configured" : "Keine Server eingerichtet",
     "Register a new server below and fill in the required details" : "Registriere unten einen neuen Server und fülle die benötigten Informationen aus",
+    "Sync request successful. This may take a while" : "Synchronisationsanfrage erfolgreich. Dies kann einen Moment dauern",
+    "Sync request failed. Check the logs" : "Synchronisationsanfrage fehlgeschlagen Prüfe die Protokolle",
     "Server successfully deleted" : "Server gelöscht",
     "Failed to delete server. Check the logs" : "Server konnte nicht gelöscht werden. Prüfen Sie die Protokolle.",
     "Sync" : "Synchronisieren",

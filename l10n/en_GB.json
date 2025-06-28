@@ -35,6 +35,8 @@
     "Registered servers list" : "Registered servers list",
     "No servers configured" : "No servers configured",
     "Register a new server below and fill in the required details" : "Register a new server below and fill in the required details",
+    "Sync request successful. This may take a while" : "Sync request successful. This may take a while",
+    "Sync request failed. Check the logs" : "Sync request failed. Check the logs",
     "Server successfully deleted" : "Server successfully deleted",
     "Failed to delete server. Check the logs" : "Failed to delete server. Check the logs",
     "Sync" : "Sync",

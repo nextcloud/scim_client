@@ -36,6 +36,7 @@ OC.L10N.register(
     "Registered servers list" : "قائمة الخوادم المُسجّلة",
     "No servers configured" : "لم تتم تهيئة أي خوادم",
     "Register a new server below and fill in the required details" : "سجِّل خادوماً جديداً أدناه، وقم بإدخال التفاصيل المطوبة",
+    "Sync request successful. This may take a while" : "تمّ طلب المزامنة بنجاحٍ. يمكن أن يستغرق هذا بعض الوقت",
     "Server successfully deleted" : "تمّ حذف الخادوم بنجاحٍ",
     "Failed to delete server. Check the logs" : "فشل حذف الخادوم. تفحّص سجل الحركات",
     "Sync" : "زامن",

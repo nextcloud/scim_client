@@ -36,6 +36,8 @@ OC.L10N.register(
     "Registered servers list" : "등록된 서버 리스트",
     "No servers configured" : "구성된 서버가 없습니다.",
     "Register a new server below and fill in the required details" : "새 서버를 아래에 등록하고 필요한 세부 사항을 입력하십시오.",
+    "Sync request successful. This may take a while" : "동기화 요청에 성공했습니다. 이 작업은 시간이 걸릴 수 있습니다.",
+    "Sync request failed. Check the logs" : "동기화 요청에 실패했습니다. 로그를 확인하십시오.",
     "Server successfully deleted" : "서버가 성공적으로 삭제되었습니다.",
     "Failed to delete server. Check the logs" : "서버 삭제에 실패했습니다. 로그를 확인하십시오.",
     "Sync" : "동기화",

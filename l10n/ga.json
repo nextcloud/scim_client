@@ -35,6 +35,8 @@
     "Registered servers list" : "Liosta de na freastalaithe cláraithe",
     "No servers configured" : "Níl aon fhreastalaí cumraithe",
     "Register a new server below and fill in the required details" : "Cláraigh freastalaí nua thíos agus líon isteach na sonraí riachtanacha",
+    "Sync request successful. This may take a while" : "D'éirigh leis an iarratas sioncronaithe. Seans go dtógfaidh sé seo tamall",
+    "Sync request failed. Check the logs" : "Theip ar an iarratas sioncronaithe. Seiceáil na logaí",
     "Server successfully deleted" : "D'éirigh le scriosadh an fhreastalaí",
     "Failed to delete server. Check the logs" : "Theip ar an bhfreastalaí a scriosadh. Seiceáil na logaí",
     "Sync" : "Sioncrónaigh",

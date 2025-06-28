@@ -36,6 +36,8 @@ OC.L10N.register(
     "Registered servers list" : "Lista de servidores rexistrados",
     "No servers configured" : "Non hai servidores configurados.",
     "Register a new server below and fill in the required details" : "Rexistrar o novo servidor a continuación e cubrir os detalles requiridos",
+    "Sync request successful. This may take a while" : "Solicitude de sincronización satisfactoria. Isto pode levarlle tempo",
+    "Sync request failed. Check the logs" : "Produciuse un fallo na solicitude de sincronización. Consulte os ficheiros de rexistro",
     "Server successfully deleted" : "O servidor foi eliminado satisfactoriamente",
     "Failed to delete server. Check the logs" : "Produciuse un fallo ao eliminar o servidor. Consulte os ficheiros de rexistro",
     "Sync" : "Sincronizar",

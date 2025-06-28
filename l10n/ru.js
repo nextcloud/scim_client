@@ -36,6 +36,8 @@ OC.L10N.register(
     "Registered servers list" : "Список зарегистрированных серверов",
     "No servers configured" : "Серверы не настроены",
     "Register a new server below and fill in the required details" : "Зарегистрируйте новый сервер ниже и заполните необходимые данные.",
+    "Sync request successful. This may take a while" : "Запрос на синхронизацию выполнен успешно. Это может занять некоторое время",
+    "Sync request failed. Check the logs" : "Запрос на синхронизацию не удался. Проверьте журналы",
     "Server successfully deleted" : "Сервер успешно удален",
     "Failed to delete server. Check the logs" : "Не удалось удалить сервер. Проверьте логи",
     "Sync" : "Синхронизировать",

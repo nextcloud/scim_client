@@ -34,6 +34,8 @@
     "Registered servers list" : "Registrerede serverliste",
     "No servers configured" : "Ingen servere konfigureret",
     "Register a new server below and fill in the required details" : "Registrer en ny server nedenfor og udfyld de nødvendige oplysninger",
+    "Sync request successful. This may take a while" : "Synkroniseringsanmodning gennemført. Dette kan tage et stykke tid",
+    "Sync request failed. Check the logs" : "Synkroniseringsanmodning mislykkedes. Kontroller logfilerne",
     "Server successfully deleted" : "Serveren blev slettet",
     "Failed to delete server. Check the logs" : "Kunne ikke slette serveren. Kontroller logfilerne",
     "Sync" : "Synkroniser",
