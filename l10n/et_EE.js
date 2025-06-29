@@ -37,6 +37,8 @@ OC.L10N.register(
     "Registered servers list" : "Registreeritud serverite loend",
     "No servers configured" : "Servereid pole seadistatud",
     "Register a new server below and fill in the required details" : "Registreeri alljärgnevalt uus server ja täida nõutavad andmed",
+    "Sync request successful. This may take a while" : "Sünkroonimispäring õnnestus. Selleks võib kuluda aega.",
+    "Sync request failed. Check the logs" : "Sünkroonimispäring ei toiminud. Lisateavet leiad logidest",
     "Server successfully deleted" : "Serveri kustutamine õnnestus",
     "Failed to delete server. Check the logs" : "Serveri kustutamine ei õnnestunud. Lisateavet leiad logidest",
     "Sync" : "Sünkrooni",
