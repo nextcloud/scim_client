@@ -23,10 +23,11 @@
 						<Pencil :size="20" />
 					</template>
 				</NcActionButton>
-				<NcActionButton icon="icon-delete" :close-after-click="true" @click="showDeleteModal()">
+				<NcActionButton :close-after-click="true" @click="showDeleteModal()">
 					{{ t('scim_client', 'Delete') }}
 					<template #icon>
 						<NcLoadingIcon v-if="deleting" :size="20" />
+						<TrashCanOutlineIcon v-else :size="20" />
 					</template>
 				</NcActionButton>
 			</template>
@@ -57,6 +58,7 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import SyncIcon from 'vue-material-design-icons/Sync.vue'
+import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
 
 import DeleteServerModal from './DeleteServerModal.vue'
 import RegisterServerModal from './RegisterServerModal.vue'
@@ -71,6 +73,7 @@ export default {
 		Pencil,
 		RegisterServerModal,
 		SyncIcon,
+		TrashCanOutlineIcon,
 	},
 	props: {
 		server: {
