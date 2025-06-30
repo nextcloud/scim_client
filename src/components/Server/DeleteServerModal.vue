@@ -12,9 +12,6 @@
 
 			<div class="actions">
 				<NcButton type="tertiary" @click="closeModal">
-					<template #icon>
-						<Cancel :size="20" />
-					</template>
 					{{ t('scim_client', 'Cancel') }}
 				</NcButton>
 				<NcButton type="error"
@@ -36,13 +33,11 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import Cancel from 'vue-material-design-icons/Cancel.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'DeleteServerModal',
 	components: {
-		Cancel,
 		Delete,
 		NcButton,
 		NcLoadingIcon,
