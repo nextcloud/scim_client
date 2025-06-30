@@ -48,7 +48,7 @@
 					@click="isEdit ? updateServer() : registerServer()">
 					{{ isEdit ? t('scim_client', 'Save') : t('scim_client', 'Register') }}
 					<template #icon>
-						<Check v-if="!registeringServer" :size="20" />
+						<CheckIcon v-if="!registeringServer" :size="20" />
 						<NcLoadingIcon v-else :size="20" />
 					</template>
 				</NcButton>
@@ -58,7 +58,7 @@
 					@click="checkServerConnection()">
 					{{ t('scim_client', 'Check connection') }}
 					<template #icon>
-						<Connection v-if="!checkingServerConnection" :size="20" />
+						<ConnectionIcon v-if="!checkingServerConnection" :size="20" />
 						<NcLoadingIcon v-else :size="20" />
 					</template>
 				</NcButton>
@@ -79,14 +79,14 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
-import Check from 'vue-material-design-icons/Check.vue'
-import Connection from 'vue-material-design-icons/Connection.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import ConnectionIcon from 'vue-material-design-icons/Connection.vue'
 
 export default {
 	name: 'RegisterServerModal',
 	components: {
-		Check,
-		Connection,
+		CheckIcon,
+		ConnectionIcon,
 		NcButton,
 		NcInputField,
 		NcLoadingIcon,

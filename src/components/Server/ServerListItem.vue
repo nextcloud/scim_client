@@ -14,7 +14,7 @@
 				<NcActionButton :close-after-click="true" @click="syncServer(server)">
 					{{ t('scim_client', 'Sync') }}
 					<template #icon>
-						<Sync :size="20" />
+						<SyncIcon :size="20" />
 					</template>
 				</NcActionButton>
 				<NcActionButton :close-after-click="true" @click="showEditModal()">
@@ -56,7 +56,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Sync from 'vue-material-design-icons/Sync.vue'
+import SyncIcon from 'vue-material-design-icons/Sync.vue'
 
 import DeleteServerModal from './DeleteServerModal.vue'
 import RegisterServerModal from './RegisterServerModal.vue'
@@ -70,7 +70,7 @@ export default {
 		NcLoadingIcon,
 		Pencil,
 		RegisterServerModal,
-		Sync,
+		SyncIcon,
 	},
 	props: {
 		server: {

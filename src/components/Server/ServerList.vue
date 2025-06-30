@@ -19,7 +19,7 @@
 				:name="t('scim_client', 'No servers configured')"
 				:description="t('scim_client', 'Register a new server below and fill in the required details')">
 				<template #icon>
-					<FormatListBullet :size="20" />
+					<FormatListBulletedIcon :size="20" />
 				</template>
 			</NcEmptyContent>
 		</div>
@@ -29,7 +29,7 @@
 			@click="showRegister">
 			{{ t('app_api', 'Register') }}
 			<template #icon>
-				<Plus v-if="!registering" :size="20" />
+				<PlusIcon v-if="!registering" :size="20" />
 				<NcLoadingIcon v-else :size="20" />
 			</template>
 		</NcButton>
@@ -45,8 +45,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
-import FormatListBullet from 'vue-material-design-icons/FormatListBulleted.vue'
-import Plus from 'vue-material-design-icons/Plus.vue'
+import FormatListBulletedIcon from 'vue-material-design-icons/FormatListBulleted.vue'
+import PlusIcon from 'vue-material-design-icons/Plus.vue'
 
 import RegisterServerModal from './RegisterServerModal.vue'
 import ServerListItem from './ServerListItem.vue'
@@ -54,11 +54,11 @@ import ServerListItem from './ServerListItem.vue'
 export default {
 	name: 'ServerList',
 	components: {
-		FormatListBullet,
+		FormatListBulletedIcon,
 		NcButton,
 		NcEmptyContent,
 		NcLoadingIcon,
-		Plus,
+		PlusIcon,
 		RegisterServerModal,
 		ServerListItem,
 	},
