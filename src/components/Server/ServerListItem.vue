@@ -20,7 +20,7 @@
 				<NcActionButton :close-after-click="true" @click="showEditModal()">
 					{{ t('scim_client', 'Edit') }}
 					<template #icon>
-						<Pencil :size="20" />
+						<PencilOutlineIcon :size="20" />
 					</template>
 				</NcActionButton>
 				<NcActionButton :close-after-click="true" @click="showDeleteModal()">
@@ -56,7 +56,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import PencilOutlineIcon from 'vue-material-design-icons/PencilOutline.vue'
 import SyncIcon from 'vue-material-design-icons/Sync.vue'
 import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
 
@@ -70,7 +70,7 @@ export default {
 		NcActionButton,
 		NcListItem,
 		NcLoadingIcon,
-		Pencil,
+		PencilOutlineIcon,
 		RegisterServerModal,
 		SyncIcon,
 		TrashCanOutlineIcon,
