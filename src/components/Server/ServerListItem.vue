@@ -14,19 +14,20 @@
 				<NcActionButton :close-after-click="true" @click="syncServer(server)">
 					{{ t('scim_client', 'Sync') }}
 					<template #icon>
-						<Sync :size="20" />
+						<SyncIcon :size="20" />
 					</template>
 				</NcActionButton>
 				<NcActionButton :close-after-click="true" @click="showEditModal()">
 					{{ t('scim_client', 'Edit') }}
 					<template #icon>
-						<Pencil :size="20" />
+						<PencilOutlineIcon :size="20" />
 					</template>
 				</NcActionButton>
-				<NcActionButton icon="icon-delete" :close-after-click="true" @click="showDeleteModal()">
+				<NcActionButton :close-after-click="true" @click="showDeleteModal()">
 					{{ t('scim_client', 'Delete') }}
 					<template #icon>
 						<NcLoadingIcon v-if="deleting" :size="20" />
+						<TrashCanOutlineIcon v-else :size="20" />
 					</template>
 				</NcActionButton>
 			</template>
@@ -55,8 +56,9 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import Sync from 'vue-material-design-icons/Sync.vue'
+import PencilOutlineIcon from 'vue-material-design-icons/PencilOutline.vue'
+import SyncIcon from 'vue-material-design-icons/Sync.vue'
+import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
 
 import DeleteServerModal from './DeleteServerModal.vue'
 import RegisterServerModal from './RegisterServerModal.vue'
@@ -68,9 +70,10 @@ export default {
 		NcActionButton,
 		NcListItem,
 		NcLoadingIcon,
-		Pencil,
+		PencilOutlineIcon,
 		RegisterServerModal,
-		Sync,
+		SyncIcon,
+		TrashCanOutlineIcon,
 	},
 	props: {
 		server: {

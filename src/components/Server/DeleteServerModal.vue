@@ -12,9 +12,6 @@
 
 			<div class="actions">
 				<NcButton type="tertiary" @click="closeModal">
-					<template #icon>
-						<Cancel :size="20" />
-					</template>
 					{{ t('scim_client', 'Cancel') }}
 				</NcButton>
 				<NcButton type="error"
@@ -22,7 +19,7 @@
 					@click="deleteServer(server)">
 					<template #icon>
 						<NcLoadingIcon v-if="deleting" :size="20" />
-						<Delete v-else :size="20" />
+						<TrashCanOutlineIcon v-else :size="20" />
 					</template>
 					{{ t('scim_client', 'Delete') }}
 				</NcButton>
@@ -36,17 +33,15 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import Cancel from 'vue-material-design-icons/Cancel.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
 
 export default {
 	name: 'DeleteServerModal',
 	components: {
-		Cancel,
-		Delete,
 		NcButton,
 		NcLoadingIcon,
 		NcModal,
+		TrashCanOutlineIcon,
 	},
 	props: {
 		show: {
