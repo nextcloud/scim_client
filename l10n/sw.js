@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "Sifa mbaya",
     "Cancel" : "Cancel",
     "Delete" : "Futa",
+    "Password confirmation failed" : "Uthibitishaji wa nenosiri umeshindikana",
     "Name" : "Jina",
     "Save" : "Hifadhi",
     "Register" : "Sajiri",
