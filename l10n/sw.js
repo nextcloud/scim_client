@@ -7,6 +7,7 @@ OC.L10N.register(
     "Delete" : "Futa",
     "Password confirmation failed" : "Uthibitishaji wa nenosiri umeshindikana",
     "Name" : "Jina",
+    "Server URL" : "Server URL",
     "Save" : "Hifadhi",
     "Register" : "Sajiri",
     "Edit" : "Hariri"
