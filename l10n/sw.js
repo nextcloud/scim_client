@@ -10,6 +10,7 @@ OC.L10N.register(
     "Server URL" : "Server URL",
     "Save" : "Hifadhi",
     "Register" : "Sajiri",
+    "Sync" : "Sync",
     "Edit" : "Hariri"
 },
 "nplurals=2; plural=(n != 1);");
