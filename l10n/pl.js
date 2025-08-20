@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "Złe poświadczenia",
     "Cancel" : "Anuluj",
     "Delete" : "Usuń",
+    "URL should start with http:// or https://" : "Adres URL powinien zaczynać się od http:// lub https://",
     "Password confirmation failed" : "Potwierdzenie hasła nie powiodło się",
     "Name" : "Nazwa",
     "API Key" : "Klucz API",
