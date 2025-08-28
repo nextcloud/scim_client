@@ -4,6 +4,7 @@ OC.L10N.register(
     "Cancel" : "Скасаваць",
     "Delete" : "Выдаліць",
     "Name" : "Назва",
+    "Server URL" : "URL-адрас сервера",
     "Save" : "Захаваць",
     "Edit" : "Рэдагаваць"
 },
