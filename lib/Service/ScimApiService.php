@@ -81,7 +81,7 @@ class ScimApiService {
 			'filter' => sprintf('externalId eq "%s"', $userId),
 		];
 		$results = $this->networkService->request($server, '/Users', $params, 'GET');
-		$success = $results && !$results['error'];
+		$success = $results && empty($results['error']);
 		$this->logger->{ $success ? 'debug' : 'error' }('SCIM /Users GET', ['responseBody' => $results]);
 
 		if (!$success) {
@@ -103,7 +103,7 @@ class ScimApiService {
 			'filter' => sprintf('externalId eq "%s"', $groupId),
 		];
 		$results = $this->networkService->request($server, '/Groups', $params, 'GET');
-		$success = $results && !$results['error'];
+		$success = $results && empty($results['error']);
 		$this->logger->{ $success ? 'debug' : 'error' }('SCIM /Groups GET', ['responseBody' => $results]);
 
 		if (!$success) {
@@ -122,7 +122,7 @@ class ScimApiService {
 	public function verifyScimServer(array $server): array {
 		$config = $this->getScimServerConfig($server);
 
-		if ($config['error']) {
+		if (isset($config['error'])) {
 			return [
 				'error' => 'Unable to fetch SCIM server config',
 				'response' => $config,
@@ -157,7 +157,7 @@ class ScimApiService {
 	public function syncScimServer(array $server): array {
 		$config = $this->getScimServerConfig($server);
 
-		if ($config['error']) {
+		if (isset($config['error'])) {
 			return [];
 		}
 
@@ -382,13 +382,13 @@ class ScimApiService {
 	}
 
 	private function _generateEventParams(array $event, array $server): array {
-		if ($event['group_id']) {
+		if (isset($event['group_id'])) {
 			// Get the corresponding group ID on the SCIM server,
 			// or use a bulk ID if group hasn't been created yet
 			$serverGroupId = $this->getScimServerGID($server, $event['group_id']) ?: ('bulkId:Group:' . $event['group_id']);
 		}
 
-		if ($event['user_id']) {
+		if (isset($event['user_id'])) {
 			// Get the corresponding user ID on the SCIM server,
 			// or use a bulk ID if user hasn't been created yet
 			$serverUserId = $this->getScimServerUID($server, $event['user_id']) ?: ('bulkId:User:' . $event['user_id']);

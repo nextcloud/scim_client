@@ -39,16 +39,16 @@ class ScimServer extends Entity implements JsonSerializable {
 		$this->addType('url', Types::STRING);
 		$this->addType('apiKey', Types::STRING);
 
-		if ($params['id']) {
+		if (isset($params['id'])) {
 			$this->setId($params['id']);
 		}
-		if ($params['name']) {
+		if (isset($params['name'])) {
 			$this->setName($params['name']);
 		}
-		if ($params['url']) {
+		if (isset($params['url'])) {
 			$this->setUrl($params['url']);
 		}
-		if ($params['api_key']) {
+		if (isset($params['api_key'])) {
 			$this->setApiKey($params['api_key']);
 		}
 	}
