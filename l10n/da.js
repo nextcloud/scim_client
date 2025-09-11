@@ -11,7 +11,7 @@ OC.L10N.register(
     "Are you sure you want to delete this server?" : "Er du sikker på, at du vil slette denne server?",
     "Cancel" : "Annuller",
     "Delete" : "Slet",
-    "Edit Server Details" : "Rediger serverdetaljer",
+    "Edit Server Details" : "Redigér serverdetaljer",
     "Register New Server" : "Registrer ny server",
     "A server with this name already exists" : "Der findes allerede en server med dette navn",
     "URL should start with http:// or https://" : "URL skal starte med http:// eller https://",
@@ -41,6 +41,6 @@ OC.L10N.register(
     "Server successfully deleted" : "Serveren blev slettet",
     "Failed to delete server. Check the logs" : "Kunne ikke slette serveren. Kontroller logfilerne",
     "Sync" : "Synkroniser",
-    "Edit" : "Rediger"
+    "Edit" : "Redigér"
 },
 "nplurals=2; plural=(n != 1);");
