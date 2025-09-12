@@ -47,22 +47,22 @@ class ScimEvent extends Entity implements JsonSerializable {
 		$this->addType('feature', Types::STRING);
 		$this->addType('value', Types::STRING);
 
-		if ($params['id']) {
+		if (isset($params['id'])) {
 			$this->setId($params['id']);
 		}
-		if ($params['event']) {
+		if (isset($params['event'])) {
 			$this->setEvent($params['event']);
 		}
-		if ($params['group_id']) {
+		if (isset($params['group_id'])) {
 			$this->setGroupId($params['group_id']);
 		}
-		if ($params['user_id']) {
+		if (isset($params['user_id'])) {
 			$this->setUserId($params['user_id']);
 		}
-		if ($params['feature']) {
+		if (isset($params['feature'])) {
 			$this->setFeature($params['feature']);
 		}
-		if ($params['value']) {
+		if (isset($params['value'])) {
 			$this->setValue($params['value']);
 		}
 	}
