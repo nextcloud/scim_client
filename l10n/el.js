@@ -5,11 +5,13 @@ OC.L10N.register(
     "Bad credentials" : "Εσφαλμένα διαπιστευτήρια",
     "Cancel" : "Ακύρωση",
     "Delete" : "Διαγραφή",
+    "URL should start with http:// or https://" : "Το URL πρέπει να ξεκινά με http:// ή https://",
     "Password confirmation failed" : "Η επιβεβαίωση του κωδικού πρόσβασης απέτυχε",
     "Name" : "Όνομα",
     "Server URL" : "URL διακομιστή",
     "Save" : "Αποθήκευση",
     "Register" : "Εγγραφή",
+    "Check connection" : "Έλεγχος σύνδεσης",
     "Sync" : "Συγχρονισμός",
     "Edit" : "Επεξεργασία"
 },
