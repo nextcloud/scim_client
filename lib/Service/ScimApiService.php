@@ -286,7 +286,7 @@ class ScimApiService {
 					'bulkId' => 'Members:' . $groupBulkId,
 					'data' => [
 						'schemas' => [Application::SCIM_API_SCHEMA . ':PatchOp'],
-						'Operations' => $addGroupUsers,
+						'Operations' => array_values($addGroupUsers),
 					],
 				];
 
