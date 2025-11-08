@@ -10,6 +10,7 @@ OC.L10N.register(
     "Server URL" : "サーバーURL",
     "Save" : "保存する",
     "Register" : "登録",
+    "Check connection" : "接続を確認",
     "Sync" : "同期",
     "Edit" : "編集"
 },
