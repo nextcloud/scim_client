@@ -115,8 +115,8 @@ class ScimServerController extends ApiController {
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/verify')]
-	public function verifyExistingScimServer(int $id): Response {
-		$server = $this->scimServerService->getScimServer($id);
+	public function verifyExistingScimServer(int $id, array $params): Response {
+		$server = $this->scimServerService->getScimServer($id)?->jsonSerialize();
 
 		if (!$server) {
 			return new JSONResponse([
@@ -125,7 +125,13 @@ class ScimServerController extends ApiController {
 			]);
 		}
 
-		return new JSONResponse($this->scimApiService->verifyScimServer($server->jsonSerialize()));
+		// Use original API key if dummy secret is provided
+		if ($params['api_key'] === Application::DUMMY_SECRET) {
+			unset($params['api_key']);
+		}
+
+		$server = array_replace($server, $params);
+		return new JSONResponse($this->scimApiService->verifyScimServer($server));
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/verify')]

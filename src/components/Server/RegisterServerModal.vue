@@ -179,7 +179,9 @@ export default {
 		checkServerConnection() {
 			this.checkingServerConnection = true
 
-			axios.post(generateUrl('apps/scim_client/servers/verify'), { server: this._buildServerParams() })
+			const url = `apps/scim_client/servers${this.isEdit ? `/${this.server.id}` : ''}/verify`
+
+			axios.post(generateUrl(url), { params: this._buildServerParams() })
 				.then(res => {
 					if (res.data.success) {
 						showSuccess(t('scim_client', 'Server connection successful'))
