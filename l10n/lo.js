@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete" : "ລຶບ",
     "Name" : "ຊື່",
     "Save" : "ບັນທຶກ",
+    "Register" : "ລົງທະບຽນ",
     "Sync" : "Sync",
     "Edit" : "ແກ້ໄຂ"
 },
