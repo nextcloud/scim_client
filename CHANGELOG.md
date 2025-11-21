@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2025-11-21
+
+### Fixed
+
+- Server sync failure due to missing server properties. #95
+- Incorrect JSON for bulk sync group member operations. #102
+- Use saved API key when verifying existing server. #105
+
+### Changed
+
+- Update npm packages. #82 #83 #84 #85 #91 #92 #96 #98 #100 #104 #106
+- Update GitHub Actions workflows. #86 #94 #99 #103
+- Bump maximum supported Nextcloud version to 33. #102
+
 ## [1.0.5] - 2025-07-02
 
 ### Changed
@@ -61,7 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial app release.
 
-[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.0.6...HEAD
+[1.0.6]: https://github.com/nextcloud/scim_client/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/nextcloud/scim_client/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/nextcloud/scim_client/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/nextcloud/scim_client/compare/v1.0.2...v1.0.3
