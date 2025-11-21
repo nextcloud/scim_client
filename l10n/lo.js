@@ -1,6 +1,8 @@
 OC.L10N.register(
     "scim_client",
     {
+    "Bad HTTP method" : "HTTP method ບໍ່ຖືກຕ້ອງ",
+    "Bad credentials" : "ຂໍ້ມູນຢືນຢັນຕົວຕົນບໍ່ຖືກຕ້ອງ",
     "Cancel" : "ຍົກເລີກ",
     "Delete" : "ລຶບ",
     "URL should start with http:// or https://" : "URL ຄວນເລີ່ມຕົ້ນດ້ວຍ http:// ຫຼື https://",
