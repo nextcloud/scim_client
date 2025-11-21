@@ -69,16 +69,15 @@ class ScimServerController extends ApiController {
 	public function updateScimServer(int $id, array $params): Response {
 		// Restore original API key if dummy secret is provided
 		if ($params['api_key'] === Application::DUMMY_SECRET) {
-			$server = $this->scimServerService->getScimServer($id);
-			$params['api_key'] = $server->getApiKey() ?? '';
+			$params['api_key'] = $this->scimServerService->getScimServer($id)?->getApiKey() ?? '';
 		}
 
 		// Update the server config
 		$params['id'] = $id;
-		$updatedServer = new ScimServer($params);
-		$updatedServer = $this->scimServerService->updateScimServer($updatedServer);
+		$server = new ScimServer($params);
+		$server = $this->scimServerService->updateScimServer($server);
 
-		if (!$updatedServer) {
+		if (!$server) {
 			return new JSONResponse([
 				'success' => false,
 				'server' => null,
@@ -86,13 +85,13 @@ class ScimServerController extends ApiController {
 		}
 
 		// Mask API key with dummy secret if set
-		if ($updatedServer->getApiKey()) {
-			$updatedServer->setApiKey(Application::DUMMY_SECRET);
+		if ($server->getApiKey()) {
+			$server->setApiKey(Application::DUMMY_SECRET);
 		}
 
 		return new JSONResponse([
 			'success' => true,
-			'server' => $updatedServer,
+			'server' => $server,
 		]);
 	}
 
@@ -100,6 +99,14 @@ class ScimServerController extends ApiController {
 	#[FrontpageRoute(verb: 'DELETE', url: '/servers/{id}')]
 	public function unregisterScimServer(int $id): Response {
 		$server = $this->scimServerService->getScimServer($id);
+
+		if (!$server) {
+			return new JSONResponse([
+				'success' => false,
+				'server' => null,
+			]);
+		}
+
 		$server = $this->scimServerService->unregisterScimServer($server);
 
 		// Do not show API key in response
@@ -115,8 +122,8 @@ class ScimServerController extends ApiController {
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/verify')]
-	public function verifyExistingScimServer(int $id): Response {
-		$server = $this->scimServerService->getScimServer($id);
+	public function verifyExistingScimServer(int $id, array $params): Response {
+		$server = $this->scimServerService->getScimServer($id)?->jsonSerialize();
 
 		if (!$server) {
 			return new JSONResponse([
@@ -125,7 +132,13 @@ class ScimServerController extends ApiController {
 			]);
 		}
 
-		return new JSONResponse($this->scimApiService->verifyScimServer($server->jsonSerialize()));
+		// Use original API key if dummy secret is provided
+		if ($params['api_key'] === Application::DUMMY_SECRET) {
+			unset($params['api_key']);
+		}
+
+		$server = array_replace($server, $params);
+		return new JSONResponse($this->scimApiService->verifyScimServer($server));
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/verify')]

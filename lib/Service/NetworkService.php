@@ -15,7 +15,6 @@ use GuzzleHttp\Exception\ServerException;
 use OCA\ScimClient\AppInfo\Application;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
@@ -32,7 +31,6 @@ class NetworkService {
 
 	public function __construct(
 		IClientService $clientService,
-		private readonly IConfig $config,
 		private readonly LoggerInterface $logger,
 		private readonly IL10N $l10n,
 	) {
