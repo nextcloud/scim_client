@@ -18,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 
 #[CreateTable(
 	table: 'scim_client_events',
-	description: 'Table used by the SCIM client app to store user/group events for bulk sync operations',
+	description: 'Table used by the SCIM client app to store user/group events for sync operations',
 )]
 class Version000101Date20250108010942 extends SimpleMigrationStep {
 
