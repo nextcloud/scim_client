@@ -130,19 +130,9 @@ class ScimApiService {
 			];
 		}
 
-		$hasScimSchema = $config['schemas'][0] === Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig';
-		$isBulkOperationsSupported = $config['bulk']['supported'] && ($config['bulk']['maxOperations'] > 1);
-
-		if (!$hasScimSchema) {
+		if ($config['schemas'][0] !== Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig') {
 			return [
-				'error' => 'Unable to fetch SCIM config',
-				'success' => false,
-			];
-		}
-
-		if (!$isBulkOperationsSupported) {
-			return [
-				'error' => 'Bulk operations feature is required',
+				'error' => 'Server does not conform to SCIM schema',
 				'success' => false,
 			];
 		}
