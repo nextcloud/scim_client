@@ -331,7 +331,7 @@ class ScimApiService {
 
 				if ($operation) {
 					$response = $this->networkService->request($server, $operation['path'], $operation['data'] ?? [], $operation['method']);
-					$event['success'] = in_array(Application::SCIM_API_SCHEMA . ':Error', $response['schemas'] ?? []);
+					$event['success'] = (count($response['schemas']) > 0) && !in_array(Application::SCIM_API_SCHEMA . ':Error', $response['schemas']);
 					$this->logger->{ $event['success'] ? 'debug' : 'error' }(sprintf('SCIM %s %s', $operation['path'], $operation['method']), ['responseBody' => $response]);
 				}
 			}
