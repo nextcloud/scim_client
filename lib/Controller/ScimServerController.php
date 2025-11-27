@@ -142,8 +142,8 @@ class ScimServerController extends ApiController {
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/verify')]
-	public function verifyNewScimServer(array $server): Response {
-		return new JSONResponse($this->scimApiService->verifyScimServer($server));
+	public function verifyNewScimServer(array $params): Response {
+		return new JSONResponse($this->scimApiService->verifyScimServer($params));
 	}
 
 	#[FrontpageRoute(verb: 'POST', url: '/servers/{id}/sync')]
