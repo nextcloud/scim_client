@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-11-28
+
+### Added
+
+- Support for SCIM servers without bulk operations enabled. #109
+
+### Fixed
+
+- Parameter name for new server verification requests. #108
+
 ## [1.0.6] - 2025-11-21
 
 ### Fixed
@@ -75,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial app release.
 
-[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.0.6...HEAD
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/nextcloud/scim_client/compare/v1.0.6...v1.1.0
 [1.0.6]: https://github.com/nextcloud/scim_client/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/nextcloud/scim_client/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/nextcloud/scim_client/compare/v1.0.3...v1.0.4
