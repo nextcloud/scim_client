@@ -33,16 +33,16 @@
 			</template>
 		</NcListItem>
 		<RegisterServerModal
-			:show.sync="showEditDialog"
+			v-model:show="showEditDialog"
 			:servers="servers"
 			:get-all-servers="getAllServers"
 			:server="server" />
 		<DeleteServerModal
 			v-show="showDeleteDialog"
+			v-model:show="showDeleteDialog"
 			:server="server"
 			:deleting="deleting"
-			:delete-server="deleteServer"
-			:show.sync="showDeleteDialog" />
+			:delete-server="deleteServer" />
 	</div>
 </template>
 

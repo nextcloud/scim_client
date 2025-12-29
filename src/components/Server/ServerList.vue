@@ -33,7 +33,7 @@
 				<NcLoadingIcon v-else :size="20" />
 			</template>
 		</NcButton>
-		<RegisterServerModal :show.sync="showRegisterModal" :servers="servers" :get-all-servers="getAllServers" />
+		<RegisterServerModal v-model:show="showRegisterModal" :servers="servers" :get-all-servers="getAllServers" />
 	</div>
 </template>
 

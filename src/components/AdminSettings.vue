@@ -7,7 +7,7 @@
 		:name="t('scim_client', 'SCIM Client')"
 		:description="t('scim_client', 'Use Nextcloud as an identity provider for external services using the SCIM standard.')"
 		:aria-label="t('scim_client', 'SCIM Client')">
-		<ServerList :servers.sync="servers" />
+		<ServerList v-model:servers="servers" />
 	</NcSettingsSection>
 </template>
 
