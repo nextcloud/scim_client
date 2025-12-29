@@ -52,9 +52,9 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { confirmPassword } from '@nextcloud/password-confirmation'
 import { generateUrl } from '@nextcloud/router'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcListItem from '@nextcloud/vue/components/NcListItem'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import PencilOutlineIcon from 'vue-material-design-icons/PencilOutline.vue'
 import SyncIcon from 'vue-material-design-icons/Sync.vue'

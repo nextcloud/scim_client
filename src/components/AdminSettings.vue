@@ -14,7 +14,7 @@
 <script>
 import { loadState } from '@nextcloud/initial-state'
 
-import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
+import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 
 import ServerList from './Server/ServerList.vue'
 

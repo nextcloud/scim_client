@@ -11,10 +11,10 @@
 			<h3>{{ t('scim_client', 'Are you sure you want to delete this server?') }}</h3>
 
 			<div class="actions">
-				<NcButton type="tertiary" @click="closeModal">
+				<NcButton variant="tertiary" @click="closeModal">
 					{{ t('scim_client', 'Cancel') }}
 				</NcButton>
-				<NcButton type="error"
+				<NcButton variant="error"
 					:disabled="deleting"
 					@click="deleteServer(server)">
 					<template #icon>
@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcModal from '@nextcloud/vue/components/NcModal'
 
 import TrashCanOutlineIcon from 'vue-material-design-icons/TrashCanOutline.vue'
 
