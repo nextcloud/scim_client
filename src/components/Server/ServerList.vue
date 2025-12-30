@@ -24,7 +24,7 @@
 			</NcEmptyContent>
 		</div>
 		<NcButton
-			type="primary"
+			variant="primary"
 			class="register-button"
 			@click="showRegister">
 			{{ t('app_api', 'Register') }}
@@ -33,7 +33,7 @@
 				<NcLoadingIcon v-else :size="20" />
 			</template>
 		</NcButton>
-		<RegisterServerModal :show.sync="showRegisterModal" :servers="servers" :get-all-servers="getAllServers" />
+		<RegisterServerModal v-model:show="showRegisterModal" :servers="servers" :get-all-servers="getAllServers" />
 	</div>
 </template>
 
@@ -41,9 +41,9 @@
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 
 import FormatListBulletedIcon from 'vue-material-design-icons/FormatListBulleted.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'

@@ -15,7 +15,7 @@
 				<label for="server-name">{{ t('scim_client', 'Name') }}</label>
 				<NcInputField
 					id="server-name"
-					:value.sync="serverName"
+					v-model="serverName"
 					:placeholder="t('scim_client', 'Server Nickname')"
 					:aria-label="t('scim_client', 'Server Nickname')"
 					:error="!isServerNameUnique"
@@ -25,7 +25,7 @@
 				<label for="server-url">{{ t('scim_client', 'Server URL') }}</label>
 				<NcInputField
 					id="server-url"
-					:value.sync="serverUrl"
+					v-model="serverUrl"
 					:placeholder="exampleUrl"
 					:aria-label="t('scim_client', 'Server URL')"
 					:error="!isServerUrlValid || !isServerUrlUnique"
@@ -35,15 +35,15 @@
 				<label for="server-api-key">{{ t('scim_client', 'API Key') }}</label>
 				<NcPasswordField
 					id="server-api-key"
+					v-model="serverApiKey"
 					:as-text="true"
 					:show-trailing-button="false"
-					:value.sync="serverApiKey"
 					:placeholder="t('scim_client', 'Server API Key')"
 					:aria-label="t('scim_client', 'Server API Key')" />
 			</div>
 			<div class="row">
 				<NcButton
-					type="primary"
+					variant="primary"
 					:disabled="!isFormValidated"
 					@click="isEdit ? updateServer() : registerServer()">
 					{{ isEdit ? t('scim_client', 'Save') : t('scim_client', 'Register') }}
@@ -53,7 +53,7 @@
 					</template>
 				</NcButton>
 				<NcButton
-					type="secondary"
+					variant="secondary"
 					:disabled="!isServerDetailsValidated"
 					@click="checkServerConnection()">
 					{{ t('scim_client', 'Check connection') }}
@@ -73,11 +73,11 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { confirmPassword } from '@nextcloud/password-confirmation'
 import { generateUrl } from '@nextcloud/router'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcInputField from '@nextcloud/vue/components/NcInputField'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcModal from '@nextcloud/vue/components/NcModal'
+import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import ConnectionIcon from 'vue-material-design-icons/Connection.vue'

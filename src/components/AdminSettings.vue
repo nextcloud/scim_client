@@ -7,14 +7,14 @@
 		:name="t('scim_client', 'SCIM Client')"
 		:description="t('scim_client', 'Use Nextcloud as an identity provider for external services using the SCIM standard.')"
 		:aria-label="t('scim_client', 'SCIM Client')">
-		<ServerList :servers.sync="servers" />
+		<ServerList v-model:servers="servers" />
 	</NcSettingsSection>
 </template>
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
 
-import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
+import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 
 import ServerList from './Server/ServerList.vue'
 
