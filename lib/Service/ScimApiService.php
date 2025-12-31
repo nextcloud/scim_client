@@ -115,6 +115,11 @@ class ScimApiService {
 	}
 
 	private function _eventSyncSucceeded(array $response): bool {
+		if (!array_key_exists('schemas', $response)) {
+			// Cannot identify response by schema, so assume it is invalid
+			return false;
+		}
+
 		$schemas = $response['schemas'];
 		return is_array($schemas) && (count($schemas) > 0) && !in_array(Application::SCIM_API_SCHEMA . ':Error', $schemas);
 	}
@@ -135,7 +140,8 @@ class ScimApiService {
 			];
 		}
 
-		if ($config['schemas'][0] !== Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig') {
+		$schemas = $config['schemas'];
+		if (!is_array($schemas) || !in_array(Application::SCIM_CORE_SCHEMA . ':ServiceProviderConfig', $schemas)) {
 			return [
 				'error' => 'Server does not conform to SCIM schema',
 				'success' => false,
@@ -156,8 +162,14 @@ class ScimApiService {
 			return [];
 		}
 
-		$maxBulkOperations = $config['bulk']['maxOperations'];
-		$isBulkOperationsSupported = $config['bulk']['supported'] && ($maxBulkOperations > 1);
+		$maxBulkOperations = 1;
+		$isBulkOperationsSupported = false;
+
+		$bulkConfig = $config['bulk'];
+		if (is_array($bulkConfig)) {
+			$maxBulkOperations = $bulkConfig['maxOperations'] ?? 1;
+			$isBulkOperationsSupported = $bulkConfig['supported'] && ($maxBulkOperations > 1);
+		}
 
 		$users = $this->userManager->search('');
 		$groups = $this->groupManager->search('');
@@ -326,8 +338,14 @@ class ScimApiService {
 	public function updateScimServer(array $server, array &$events): void {
 		$config = $this->getScimServerConfig($server);
 
-		$maxBulkOperations = $config['bulk']['maxOperations'];
-		$isBulkOperationsSupported = $config['bulk']['supported'] && ($maxBulkOperations > 1);
+		$maxBulkOperations = 1;
+		$isBulkOperationsSupported = false;
+
+		$bulkConfig = $config['bulk'];
+		if (is_array($bulkConfig)) {
+			$maxBulkOperations = $bulkConfig['maxOperations'] ?? 1;
+			$isBulkOperationsSupported = $bulkConfig['supported'] && ($maxBulkOperations > 1);
+		}
 
 		if (!$isBulkOperationsSupported) {
 			foreach ($events as &$event) {
