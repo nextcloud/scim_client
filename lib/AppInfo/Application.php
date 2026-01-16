@@ -30,6 +30,8 @@ use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserCreatedEvent;
 use OCP\User\Events\UserDeletedEvent;
 
+include_once __DIR__ . '/../../vendor/autoload.php';
+
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'scim_client';
 	public const DUMMY_SECRET = 'scimClientDummySecret123456789scimClientDummySecret123456789';
