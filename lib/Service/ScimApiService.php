@@ -400,14 +400,10 @@ class ScimApiService {
 		$name = $this->nameParser->parse($displayName);
 
 		return [
-			'formatted' => $displayName,
 			// Some servers may require a family name; if empty, repeat given name
 			'familyName' => $name->getLastname() ?: $name->getFirstname(),
 			// Given name should always be non-empty
 			'givenName' => $name->getFirstname(),
-			'middleName' => $name->getMiddlename(),
-			'honorificPrefix' => $name->getSalutation(),
-			'honorificSuffix' => $name->getSuffix(),
 		];
 	}
 
