@@ -183,6 +183,9 @@ class ScimApiService {
 			$userBulkId = 'User:' . $userId;
 			$serverIds[$userBulkId] = $this->getScimServerUID($server, $userId);
 
+			// Some servers may require an email address, so generate a temporary one if it's not provided
+			$userEmail = $user->getEMailAddress() ?: filter_var($userId . '@example.com', FILTER_SANITIZE_EMAIL);
+
 			// If user already exists in server, replace existing user, otherwise create new user
 			$syncUserOperation = [
 				'method' => $serverIds[$userBulkId] ? 'PUT' : 'POST',
@@ -194,8 +197,7 @@ class ScimApiService {
 					'externalId' => $userId,
 					'userName' => $userId,
 					'name' => $this->_generateNameAttributes($user->getDisplayName()),
-					// Some servers may require an email address, so use a temporary one here
-					'emails' => [['value' => $user->getEmailAddress() ?: 'change.me@example.com']],
+					'emails' => [['value' => $userEmail]],
 				],
 			];
 
@@ -482,6 +484,10 @@ class ScimApiService {
 			// If user already exists on server, replace the existing user instead
 			$serverUserExists = !str_starts_with($serverUserId, 'bulkId:');
 
+			// Some servers may require an email address, so generate a temporary one here
+			// If an email address is set on account creation, it will be updated in the UserChangedEvent
+			$userEmail = filter_var($event['user_id'] . '@example.com', FILTER_SANITIZE_EMAIL);
+
 			return [
 				'method' => $serverUserExists ? 'PUT' : 'POST',
 				'path' => '/Users' . ($serverUserExists ? ('/' . $serverUserId) : ''),
@@ -492,8 +498,7 @@ class ScimApiService {
 					'externalId' => $event['user_id'],
 					'userName' => $event['user_id'],
 					'name' => $this->_generateNameAttributes($displayName),
-					// Some servers may require an email address, so use a temporary one here
-					'emails' => [['value' => 'change.me@example.com']],
+					'emails' => [['value' => $userEmail]],
 				],
 			];
 		}
