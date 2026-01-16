@@ -16,6 +16,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
+use TheIconic\NameParser\Parser;
 
 /**
  * Service to make requests to SCIM server
@@ -24,8 +25,8 @@ class ScimApiService {
 
 	private const ALLOWED_USER_ATTRIBUTES = [
 		'active' => 'active',
-		'displayName' => 'name.formatted',
-		'eMailAddress' => 'emails.value',
+		'displayName' => 'name',
+		'eMailAddress' => 'emails',
 	];
 
 	public function __construct(
@@ -33,6 +34,7 @@ class ScimApiService {
 		private readonly IUserManager $userManager,
 		private readonly NetworkService $networkService,
 		private readonly LoggerInterface $logger,
+		private readonly Parser $nameParser,
 	) {
 	}
 
@@ -191,9 +193,7 @@ class ScimApiService {
 					'active' => $user->isEnabled(),
 					'externalId' => $userId,
 					'userName' => $userId,
-					'name' => [
-						'formatted' => $user->getDisplayName(),
-					],
+					'name' => $this->_generateNameAttributes($user->getDisplayName()),
 					// Some servers may require an email address, so use a temporary one here
 					'emails' => [['value' => $user->getEmailAddress() ?: 'change.me@example.com']],
 				],
@@ -394,6 +394,21 @@ class ScimApiService {
 		}
 	}
 
+	private function _generateNameAttributes(string $displayName): array {
+		$name = $this->nameParser->parse($displayName);
+
+		return [
+			'formatted' => $displayName,
+			// Some servers may require a family name; if empty, repeat given name
+			'familyName' => $name->getLastname() ?: $name->getFirstname(),
+			// Given name should always be non-empty
+			'givenName' => $name->getFirstname(),
+			'middleName' => $name->getMiddlename(),
+			'honorificPrefix' => $name->getSalutation(),
+			'honorificSuffix' => $name->getSuffix(),
+		];
+	}
+
 	private function _generateEventParams(array $event, array $server): array {
 		if (isset($event['group_id'])) {
 			// Get the corresponding group ID on the SCIM server,
@@ -429,6 +444,16 @@ class ScimApiService {
 				return [];
 			}
 
+			$newValue = $event['value'];
+
+			if ($event['feature'] === 'displayName') {
+				$newValue = $this->_generateNameAttributes($event['value']);
+			}
+
+			if ($event['feature'] === 'eMailAddress') {
+				$newValue = [['value' => $event['value']]];
+			}
+
 			return [
 				'method' => 'PATCH',
 				'path' => '/Users/' . $serverUserId,
@@ -438,7 +463,7 @@ class ScimApiService {
 						[
 							'op' => 'replace',
 							'path' => self::ALLOWED_USER_ATTRIBUTES[$event['feature']],
-							'value' => $event['value'],
+							'value' => $newValue,
 						],
 					],
 				],
@@ -446,6 +471,14 @@ class ScimApiService {
 		}
 
 		if ($event['event'] === 'UserCreatedEvent') {
+			$displayName = $this->userManager->getDisplayName($event['user_id']);
+
+			if ($displayName === null) {
+				// User was probably deleted after this event, but create user anyway
+				// so that the corresponding UserDeletedEvent can be processed correctly
+				$displayName = 'Deleted User';
+			}
+
 			// If user already exists on server, replace the existing user instead
 			$serverUserExists = !str_starts_with($serverUserId, 'bulkId:');
 
@@ -458,7 +491,7 @@ class ScimApiService {
 					'active' => true,
 					'externalId' => $event['user_id'],
 					'userName' => $event['user_id'],
-					'name' => ['formatted' => $event['user_id']],
+					'name' => $this->_generateNameAttributes($displayName),
 					// Some servers may require an email address, so use a temporary one here
 					'emails' => [['value' => 'change.me@example.com']],
 				],
