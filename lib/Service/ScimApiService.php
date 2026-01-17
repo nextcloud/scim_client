@@ -80,7 +80,7 @@ class ScimApiService {
 	 */
 	public function getScimServerUID(array $server, string $userId): string {
 		$params = [
-			'filter' => sprintf('externalId eq "%s"', $userId),
+			'filter' => sprintf('externalId eq "%s" or userName eq "%s"', $userId, $userId),
 		];
 		$results = $this->networkService->request($server, '/Users', $params, 'GET');
 		$success = $results && empty($results['error']);
