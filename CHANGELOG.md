@@ -11,6 +11,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-01-29
+
+### Added
+
+- Parse user display name, add name parts as sub-attributes. #119
+
+### Fixed
+
+- Temporarily remove extraneous name sub-attributes. #125
+- Enable retrieval of user's server ID by username. #121
+- Generate unique temporary email addresses per user. #120
+- Handle missing config attributes in responses. #118
+
+### Changed
+
+- Migrate to Vue 3. #115
+- Update npm packages. #114 #117 #122 #123
+- Update GitHub Actions workflows. #113 #116
+- Update composer dependencies. #112 #124
+
 ## [1.1.0] - 2025-11-28
 
 ### Added
@@ -85,7 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial app release.
 
-[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/nextcloud/scim_client/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/nextcloud/scim_client/compare/v1.0.6...v1.1.0
 [1.0.6]: https://github.com/nextcloud/scim_client/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/nextcloud/scim_client/compare/v1.0.4...v1.0.5
