@@ -5,10 +5,13 @@ OC.L10N.register(
     "Bad credentials" : "Pogrešne vjerodajnice",
     "Cancel" : "Odustani",
     "Delete" : "Izbriši",
+    "URL should start with http:// or https://" : "URL treba započeti s http:// ili https://",
+    "Password confirmation failed" : "Lozinka confirmation failed",
     "Name" : "Naziv",
     "Server URL" : "URL poslužitelja",
     "Save" : "Spremi",
     "Register" : "Registriraj se",
+    "Check connection" : "Provjeri vezu",
     "Sync" : "Sinkronizacija",
     "Edit" : "Uredi"
 },
