@@ -1,10 +1,16 @@
 OC.L10N.register(
     "scim_client",
     {
+    "Bad HTTP method" : "Буруу HTTP арга",
+    "Bad credentials" : "Буруу нэвтрэх мэдээлэл",
     "Cancel" : "Цуцлах",
     "Delete" : "Устгах",
+    "URL should start with http:// or https://" : "URL нь http:// эсвэл https://-ээр эхлэх ёстой",
+    "Password confirmation failed" : "Нууц үг баталгаажуулалт амжилтгүй",
     "Name" : "Нэр",
     "Save" : "Хадгалах",
+    "Register" : "Бүртгүүлэх",
+    "Check connection" : "Холболт шалгах",
     "Edit" : "Өөрчлөх"
 },
 "nplurals=2; plural=(n != 1);");
