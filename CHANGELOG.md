@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-03-04
+
+### Fixed
+
+- Add missing PHP dependencies for packaged app. #142
+
+### Changed
+
+- Update npm packages. #129 #131 #133 #135 #136 #140
+- Update GitHub Actions workflows. #128 #139
+- Update composer dependencies. #130
+
 ## [1.2.0] - 2026-01-29
 
 ### Added
@@ -105,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial app release.
 
-[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/nextcloud/scim_client/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/nextcloud/scim_client/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/nextcloud/scim_client/compare/v1.0.6...v1.1.0
 [1.0.6]: https://github.com/nextcloud/scim_client/compare/v1.0.5...v1.0.6
