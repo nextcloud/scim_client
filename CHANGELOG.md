@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-04-13
+
+### Changed
+
+- Bump maximum supported Nextcloud version to 34. #155
+- Update npm packages. #144 #145 #146 #148 #151 #153 #154 #156
+- Update GitHub Actions workflows. #152
+
 ## [1.2.1] - 2026-03-04
 
 ### Fixed
@@ -117,7 +125,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial app release.
 
-[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/nextcloud/scim_client/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/nextcloud/scim_client/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/nextcloud/scim_client/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/nextcloud/scim_client/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/nextcloud/scim_client/compare/v1.0.6...v1.1.0
