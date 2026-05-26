@@ -35,7 +35,6 @@ class ScimSyncRequestMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-
 	/**
 	 * @param int $serverId
 	 *
