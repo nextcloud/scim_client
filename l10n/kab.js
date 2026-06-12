@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete" : "Kkes",
     "Name" : "Nom",
     "Save" : "Sekles",
+    "Register" : "Jerred",
     "Sync" : "Mtawi",
     "Edit" : "Ẓreg"
 },
