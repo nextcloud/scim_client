@@ -1,9 +1,8 @@
 OC.L10N.register(
     "scim_client",
     {
-    "Cancel" : "Cancelar",
-    "Delete" : "Borrar",
-    "Name" : "Nombre",
+    "Cancel" : "Cancel",
+    "Delete" : "Delete",
     "Save" : "Save"
 },
 "nplurals=2; plural=(n != 1);");

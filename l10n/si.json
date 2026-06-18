@@ -1,6 +1,8 @@
 { "translations": {
     "Cancel" : "අවලංගු",
+    "Delete" : "Delete",
     "Name" : "නම",
+    "Save" : "Save",
     "Edit" : "සංස්කරණය"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
