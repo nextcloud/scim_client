@@ -3,11 +3,16 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Método HTTP incorreto",
     "Bad credentials" : "Credenciais inválidas",
+    "Delete Server Confirmation" : "Confirmação de Remoção de Servidor",
     "Cancel" : "Cancelar",
     "Delete" : "Eliminar",
+    "A server with this URL already exists" : "Um servidor com este URL já existe",
+    "Failed to register server. Check the logs" : "Falha ao registrar servidor. Verifique os logs",
+    "Server successfully updated" : "Servidor atualizado com sucesso",
     "Name" : "Nome",
     "Save" : "Guardar",
     "Register" : "Registar",
+    "Server successfully deleted" : "Servidor excluído com sucesso",
     "Sync" : "Sincronizar",
     "Edit" : "Editar"
 },
