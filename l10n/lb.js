@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete" : "Läschen",
     "Name" : "Numm",
     "Save" : "Späicheren",
+    "Sync" : "Synchroniséieren",
     "Edit" : "Änneren"
 },
 "nplurals=2; plural=(n != 1);");
