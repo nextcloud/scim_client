@@ -7,6 +7,7 @@
 	errorLevel="4"
 	findUnusedBaselineEntry="true"
 	findUnusedCode="false"
+	findUnusedIssueHandlerSuppression="false"
 	ensureOverrideAttribute="false"
 	phpVersion="8.1"
 	resolveFromConfigFile="true"
