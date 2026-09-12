@@ -9,7 +9,7 @@ OC.L10N.register(
     "Server URL" : "Servera URL",
     "Save" : "Saglabāt",
     "Failed to delete server. Check the logs" : "Neizdevās izdzēst serveri. Jāpārbauda žurnāli",
-    "Sync" : "Sinhronizēt",
+    "Sync" : "Vienādot",
     "Edit" : "Labot"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
