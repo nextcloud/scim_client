@@ -6,6 +6,7 @@ OC.L10N.register(
     "Identity Management" : "Identitetsstyring",
     "SCIM Client" : "SCIM klient",
     "Use Nextcloud as an SCIM identity provider" : "Anvend Nextcloud som SCIM identitetsudbyder",
+    "Use Nextcloud as an identity provider for external services using the [SCIM](https://scim.cloud/) standard.\n\nSimply add your SCIM servers in the admin settings, and the app will automatically sync all Nextcloud users and groups to your servers." : "Brug Nextcloud som identitetsudbyder for eksterne tjenester med standarden [SCIM](https://scim.cloud/).\n\nTilføj blot dine SCIM-servere i administratorindstillingerne, så synkroniserer appen automatisk alle brugere og grupper i Nextcloud til dine servere.",
     "Use Nextcloud as an identity provider for external services using the SCIM standard." : "Anvend Nextcloud som identitetsudbyder til eksterne tjenester ved hjælp af SCIM standarden.",
     "Delete Server Confirmation" : "Slet server bekræftelse",
     "Are you sure you want to delete this server?" : "Er du sikker på, at du vil slette denne server?",
