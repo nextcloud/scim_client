@@ -22,7 +22,7 @@ OC.L10N.register(
     "Failed to check connection to server. Check the logs" : "Kontrola pripojenia k serveru zlyhala. Skontrolujte protokoly",
     "Server successfully registered, initial sync started" : "Server bol úspešne zaregistrovaný, začala sa úvodná synchronizácia",
     "Failed to register server. Check the logs" : "Registrácia servera zlyhala. Skontrolujte protokoly",
-    "Password confirmation failed" : "Overenie hesla zlyhalo",
+    "Password confirmation failed" : "Potvrdenie hesla zlyhalo",
     "Server successfully updated" : "Server bol úspešne aktualizovaný",
     "Failed to update server. Check the logs" : "Aktualizácia servera zlyhala. Skontrolujte protokoly",
     "Name" : "Názov",
